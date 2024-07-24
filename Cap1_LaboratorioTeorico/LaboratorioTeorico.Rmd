@@ -1,0 +1,1685 @@
+---
+title: "PSE5990: Evolução [do Comportamento] Social I: uma abordagem quantitativa"
+author: |
+  | José O Siqueira (siqueira@usp.br)
+  | Paulo SP Silveira (silveira@usp.br)
+  | João L Bernardy (bernardy@usp.br)
+subtitle: "Capítulo 1: Laboratório do Teórico"
+date: "`r format(Sys.time(), format='%d/%B/%Y %H:%Mh')`"
+output:
+  html_document:
+    css: style.css
+    footer: "LaboratorioTeorico.rmd"
+    font_adjustment: 1
+    df_print: tibble
+    highlight: pygments
+    theme: cerulean
+    number_sections: no
+    toc: yes
+    toc_title: Sumário
+    toc_depth: 4
+    toc_float:
+      collapsed: yes
+      smooth_scroll: no
+  slidy_presentation:
+    css: style.css
+    footer: "LaboratorioTeorico.rmd"
+    font_adjustment: -1
+    df_print: tibble
+    highlight: pygments
+    theme: cerulean
+    number_sections: no
+    toc: yes
+    toc_title: Sumário
+    toc_depth: 4
+    toc_float:
+      collapsed: yes
+      smooth_scroll: no
+---
+
+```{r set-options, echo=FALSE, cache=FALSE}
+options(width = 80)
+```
+
+```{css, echo=FALSE}
+.code {
+  font-size: 18px;
+  background-color: white;
+  border: 2px solid darkgray;
+  font-weight: bold;
+  max-width: none !important;
+}
+.output {
+  font-size: 18px;
+  background-color: white;
+  border: 2px solid black;
+  font-weight: bold;
+  max-width: none !important;
+}
+.main-container {
+  max-width: none !important;
+}
+.pre {
+  max-height: 500px !important;
+  overflow-y: auto !important;
+  overflow-x: scroll !important;
+}
+.bgobs {
+  background-color: #a0d8d8;
+}
+.bgcodigo {
+  background-color: #eeeeee;
+}
+.bgsaida {
+  background-color: #ecf7db;
+}
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(eval=TRUE,
+                      echo=TRUE, 
+                      fig.width=7, 
+                      fig.height=6,
+                      fig.align="center",
+                      comment=NA,
+                      class.source="code",
+                      class.output="output")
+```
+
+
+```{r}
+invisible(Sys.setlocale("LC_CTYPE", "pt_BR.UTF-8"))
+invisible(Sys.setlocale("LC_ALL", "pt_BR.UTF-8"))
+```
+
+```{r, echo=TRUE, eval=FALSE}
+options(warn=-1)
+suppressMessages(library(knitr, warn.conflicts=FALSE))
+suppressMessages(library(openxlsx, warn.conflicts=FALSE))
+suppressMessages(library(readxl, warn.conflicts=FALSE))
+```
+
+* Script R
+
+    * [eiras.dec.R](eiras.dec.R)
+    * [eiras.deltapdec.R](eiras.deltapdec.R)
+    * [eiras.deltapfncV.R](eiras.deltapfncV.R)
+    * [eiras.demodeltapdec.R](eiras.demodeltapdec.R)
+    * [eiras.demodeltapfncV.R](eiras.demodeltapfncV.R)
+    * [eiras.demoptdec.R](eiras.demoptdec.R)
+    * [eiras.demoptfncV.R](eiras.demoptfncV.R)
+    * [eiras.friendlycolor.R](eiras.friendlycolor.R)
+    * [eiras.pduaslinhasdec.R](eiras.pduaslinhasdec.R)
+    * [eiras.pduaslinhasfncV.R](eiras.pduaslinhasfncV.R)
+    * [eiras.viabilidade.R](eiras.viabilidade.R)
+    * [eiras.viabilidadedec2.R](eiras.viabilidadedec2.R)
+    * [eiras.viabilidadefncV.R](eiras.viabilidadefncV.R)
+    * [eiras.viabilidadeplot.R](eiras.viabilidadeplot.R)
+    * [eiras.Vmax.R](eiras.Vmax.R)
+    * [VListaExerc.R](VListaExerc.R)
+    * [VmaxListaExerc.R](VmaxListaExerc.R)
+    * [Vrepl_genetica.R](Vrepl_genetica.R)
+    * [Vrepl_genetica_mod.R](Vrepl_genetica_mod.R)
+
+
+* files
+
+    * [viabilidade_res.xlsx](viabilidade_res.xlsx)
+    * [viabilidadedec_res.xlsx](viabilidadedec_res.xlsx)
+    * [viabilidadedec2_res.xlsx](viabilidadedec2_res.xlsx)
+    * [viabilidadefncV_res.xlsx](viabilidadefncV_res.xlsx)
+
+# Material
+
+* HTML de R Markdown em [`RPubs`](http://rpubs.com/josiqueira/){target="_blank"}
+* Arquivos em [`GitHub`](https://github.com/josiqueira/EvolSoc){target="_blank"}
+
+<!-- # Adicionar -->
+
+<!-- * Garﬁnkel, A et al. (2017) _Modeling Life: The Mathematics of Biological Systems_. USA: Springer. -->
+
+<!--     * Example: Game Theory Models in Evolution and Social Theory -->
+<!--     * The Replicator Equation -->
+<!--     * Hawks and Doves -->
+    
+# Livro-texto
+
+O objetivo desta disciplina é apresentar a teoria formal sobre os processos de evolução social em animais humanos e não-humanos utilizando o livro de McElreath & Boyd (2007).
+
+```{r fig.align="left", out.width = '80%', out.height = '70%', echo=FALSE}
+knitr::include_graphics("image/McElreathBoyd.png")
+```
+
+# Capítulos
+
+```{r echo=FALSE, warning=FALSE, error=FALSE}
+dt_table <- readxl::read_excel("tables/Capitulos.xlsx")
+#names(dt_table) <- rep("",ncol(dt_table))
+# https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html
+k <- kableExtra::kbl(dt_table) 
+k <- kableExtra::kable_paper(k, full_width=FALSE) 
+k <- kableExtra::row_spec(k, 0, bold = TRUE, background = "#eeeeee")
+k <- kableExtra::column_spec(k, 1, bold = TRUE, border_right = TRUE)
+k <- kableExtra::column_spec(k, 2, width = "30em")
+kableExtra::kable_styling(k, bootstrap_options = c("striped","hover","condensed","responsive"),latex_options = "HOLD_position")
+# caso queira folha de lado, só tem efeito no PDF
+#kableExtra::landscape(k)
+```
+
+# Como usar o livro
+
+1. Estudar o livro seguindo a ordem dos capítulos.
+1. Ler não é suficiente. Idealmente, você deve entender e refazer as passagens matemáticas de cada exemplo apresentado no texto.
+1. Resolver as questões propostas na disciplina.
+1. Seja paciente consigo, conosco e com o material.
+
+```{r fig.align="left", out.width = '50%', out.height = '20%', echo=FALSE}
+knitr::include_graphics("image/Miyagi.jpg")
+```
+
+# O fundamento dos fundamentos
+
+Alguns dos modelos apresentados neste curso têm mais um século. No entanto, isso não importa. 
+
+Esses modelos ainda fazem parte do debate contemporâneo sobre evolução social, e mesmo que não fizessem, eles são a fundação que permite a aprendizagem de modelos mais recentes. 
+
+Imagine tentar aprender física newtoniana sem conhecimento de álgebra e cálculo! 
+
+## Por que tanta álgebra? 
+
+Estudantes que se limitam a decorar fórmulas, podem achar que o material tem "matemática demais". 
+
+No entanto, a experiência dos autores (e a nossa) ensinando este assunto, mostra que o conhecimento sobre a origem das fórmulas é fundamental na resolução de problemas.
+
+# Capítulo 1: O Laboratório do Teórico
+
+```{r echo=FALSE}
+if (knitr::is_html_output()){fontsize <- 28}
+if (knitr::is_latex_output()){fontsize <- 12}
+texto <- "
+\"In the distant future, I see open fields for far more important researches. Psychology will be based on a new foundation, that of the necessary acquirement of each mental power and capacity by gradation.\"
+(Charles Darwin, A Origem das Espécies)"
+dt_table <- as.data.frame(matrix(data=texto,ncol=1,nrow=1))
+names(dt_table) <- rep("",ncol(dt_table))
+k <- kableExtra::kbl(dt_table, toprule = "", midrule = "", bottomrule = "") 
+k <- kableExtra::kable_paper(k, full_width=FALSE) 
+k <- kableExtra::row_spec(k, 0, background = "#FFFFFF")
+k <- kableExtra::column_spec(k, 1, width = "10in", background = "#EFEFEF")
+kableExtra::kable_styling(k, bootstrap_options = c("responsive"),
+                          font_size = fontsize,
+                          latex_options = "HOLD_position")
+```
+<!-- quote, fim -->
+
+## Objetivo
+
+Apresentar **modelos matemáticos** que revelam como interações entre organismos que perduram por longos períodos de tempo moldam a evolução do comportamento.
+
+# Uma palavra sobre modelos matemáticos
+
+```{r echo=FALSE}
+if (knitr::is_html_output()){fontsize <- 28}
+if (knitr::is_latex_output()){fontsize <- 12}
+texto <- "
+\"Modelos são representações convenientes de coisas relevantes.\"
+Prof. Eduardo Massad"
+dt_table <- as.data.frame(matrix(data=texto,ncol=1,nrow=1))
+names(dt_table) <- rep("",ncol(dt_table))
+k <- kableExtra::kbl(dt_table, toprule = "", midrule = "", bottomrule = "") 
+k <- kableExtra::kable_paper(k, full_width=FALSE) 
+k <- kableExtra::row_spec(k, 0, background = "#FFFFFF")
+k <- kableExtra::column_spec(k, 1, width = "10in", background = "#EFEFEF")
+kableExtra::kable_styling(k, bootstrap_options = c("responsive"),
+                          font_size = fontsize,
+                          latex_options = "HOLD_position")
+```
+<!-- quote, fim -->
+
+Modelos matemáticos nos ajudam a entender processos que são complexos demais para serem descritos por palavras. 
+
+Esses modelos e as ferramentas usadas para analisá-los constituem o **laboratório do teórico.**  
+
+Os modelos, por sua vez, são experimentos que nos permitem entender as relações causais entre variáveis (dependentes e independentes) de um fenômeno qualquer.
+
+Não é possível entender a literatura sobre biologia evolutiva e comportamento animal sem entender esses modelos. 
+
+No entanto, poucos programas de pós-graduação preparam seus estudantes para ler modelos matemáticos. 
+
+Mesmo pesquisas empíricas podem ser prejudicadas pela não compreensão da teoria que as embasam.
+
+# A utilidade de modelos parcimoniosos 
+
+Uma passagem de Sylvie and Bruno Concluded de Lewis Carroll ilustra a importância de modelos parcimoniosos:
+
+```{r echo=FALSE}
+if (knitr::is_html_output()){fontsize <- 22}
+if (knitr::is_latex_output()){fontsize <- 14}
+texto <- "
+\"Senhor — [...] Qual você considera o maior mapa que seria realmente útil?\"
+
+\"Narrador — Cerca de quinze centímetros por milha\"
+
+\"Senhor — Apenas quinze centímetros? Logo chegamos a seis metros por milha. Então, tentamos cem metros por milha. Em seguida, tivemos a maior ideia de todas! De fato, nós fizemos um mapa do país, em uma escala de uma milha por milha.\"
+
+\"Narrador — E você tem usado muito?\"
+
+\"Senhor — Ele não foi divulgado ainda. Os agricultores se opuseram: eles disseram que cobriria todo o país e impediria a luz do sol! Então agora, usamos o próprio país, como seu próprio mapa, e garanto que funciona quase tão bem.\"
+
+(Lewis Carroll, Sylvie and Bruno Concluded)"
+
+dt_table <- as.data.frame(matrix(data=texto,ncol=1,nrow=1))
+names(dt_table) <- rep("",ncol(dt_table))
+k <- kableExtra::kbl(dt_table, toprule = "", midrule = "", bottomrule = "") 
+k <- kableExtra::kable_paper(k, full_width=FALSE) 
+k <- kableExtra::row_spec(k, 0, background = "#FFFFFF")
+k <- kableExtra::column_spec(k, 1, width = "10in", background = "#EFEFEF")
+kableExtra::kable_styling(k, bootstrap_options = c("responsive"),
+                          font_size = fontsize,
+                          latex_options = "HOLD_position")
+```
+
+**Moral explícita** 
+
+Modelos são como mapas estilizados ou caricaturas da realidade. 
+
+Modelos são mais úteis quando mostram alguns detalhes e omitem (intencionalmente) outros. 
+
+Modelos não são 'miniaturas' da natureza, são representações convenientes daquilo que é relevante.
+
+# Por que não apenas simular?
+
+Os autores defendem e mostram uma preferência por uma abordagem exclusivamente matemática. 
+
+Embora simulações não façam parte das soluções apresentadas ao longo do livro, defendemos uma abordagem que integra simulação e matemática. 
+Nossos métodos incluem: 
+
+* Demonstrações matemáticas/ estatísticas;
+* Análise de gráficos binários e ternários; 
+* Simulação baseada em agentes.
+
+## Por que integrar simulação e matemática?
+
+Enquanto a matemática trabalha com valores médios populacionais, a simulação permite uma apreciação da dinâmica populacional, por meio da modelagem dos indivíduos. 
+
+Por outro lado, a matemática é a forma mais objetiva de explicitar a relação entre variáveis dependentes e independentes. 
+
+Gráficos binários/ternários nos ajudam a identificar visualmente pontos de equilíbrio entre duas ou três estratégias. Uma vez identificados, podemos explorar esses pontos matematicamente. 
+
+<!-- # Qual o volume de uma caixa de papelão? -->
+
+<!-- ```{r fig.align="left", out.width = '30%', out.height = '20%', echo=FALSE} -->
+<!-- knitr::include_graphics("image/Cardboardbox.png") -->
+<!-- ``` -->
+
+<!-- Sabemos que as medidas da caixa são:  -->
+
+<!-- * $l$ (comprimento) -->
+<!-- * $h$ (altura) -->
+<!-- * $w$ (largura) -->
+
+<!-- Então, o volume da caixa é:  -->
+
+<!-- $$\text{Volume} = l \times w \times h$$ -->
+
+<!-- ## Este modelo está correto?  -->
+
+<!-- Não! porque esse modelo deixa de fora muitos detalhes que fazem parte da caixa de fato.  -->
+
+<!-- Por outro lado, mesmo um modelo impreciso como este pode ser bom o bastante para ser útil.  -->
+
+<!-- Digamos, por exemplo, que você precisa de uma estimativa grosseira de quantas caixas precisará para transportar seus livros.  -->
+
+<!-- Pode ser que esse modelo seja bom o suficiente.  -->
+
+<!-- # A espessura do papelão -->
+
+<!-- Suponha que você precisa de um pouco mais de precisão.  -->
+
+<!-- Agora, você quer desconsiderar a espessura do papelão ($t$) e medir somente o volume interno da caixa.  -->
+
+<!-- Sendo assim:  -->
+
+<!-- * $l-2t$ (comprimento) -->
+<!-- * $w-2t$ (largura) -->
+<!-- * $h-2t$ (altura) -->
+
+<!-- Então, o volume interno da caixa é dado por: -->
+
+<!-- $$\text{Volume interno} = (l-2t) \times (w-2t) \times (h-2t)$$ -->
+
+<!-- ## Quanto essa diferença importa?  -->
+
+<!-- Você fabrica caixas de $200 \times 300 \times 400$ mm e usa um papelão de 5 mm.  -->
+
+<!-- Se você mudar a expessura para 4 mm, qual a diferença em termos de volume?  -->
+
+<!-- $$190 \times 290 \times 390 = 21,489,000 \; mm^3$$ -->
+
+<!-- $$192 \times 292 \times 392 = 21,977,088 \; mm^3$$ -->
+
+<!-- Isso resulta em um ganho de $\approx 2\%$ (ou 488 ml) no volume da caixa.  -->
+
+<!-- # Qual o tamanho da caixa?  -->
+
+<!-- * Suponha que você precisa de caixas com um volume de 20 litros.  -->
+<!-- * A caixa deve ter a base quadrada e o papelão deve ter camadas dobradas no fundo e na tampa. -->
+<!-- * O papelão custa 30 centavos por $m^2$. -->
+
+<!-- ## Volume  -->
+
+<!-- Se a base é quadrada, o volume ($0.02 \,m^3$) da caixa é dado por:  -->
+
+<!-- $$ 0.02 = w \times w \times h = w^{2}h$$ -->
+
+<!-- ## Área  -->
+
+<!-- A área dos quatro lados é dada por:  -->
+
+<!-- $$\text{Área}_{\text{lados}} = 4 \times w \times h = 4wh$$ -->
+
+<!-- A área da base e da tampa é dada por:  -->
+
+<!-- $$\text{Área}_{\text{base}+\text{tampa}} = 4 \times w \times w = 4w^{2}$$ -->
+
+<!-- Portanto, a área total é:  -->
+
+<!-- $$ \text{Área} = 4w (h + w)$$ -->
+
+<!-- # A caixa de menor custo  -->
+
+<!-- Podemos reescrever o volume como:  -->
+
+<!-- $$h=\frac{0.02}{w^2}$$ -->
+
+<!-- O custo, por sua vez, é:  -->
+
+<!-- $$ \text{Custo} = 0.3 (4w (h + w))$$ -->
+
+<!-- ## Custo em função de $w$ -->
+
+<!-- Substituindo $h$ temos:  -->
+
+<!-- $$\text{Custo} = 0.3\left(4w \left(\frac{0.02}{w^2} + w\right)\right) = 0.3 \left(\frac{0.08}{w}+4w^{2}\right)$$ -->
+
+<!-- ``` {r out.width='40%', echo=FALSE} -->
+<!-- x <- seq(0,1,by=.01) -->
+<!-- y <- .3*(.08/x+4*x^2) -->
+<!-- plot(x, y, -->
+<!--      ylim=c(0,.5), xlim=c(0,.5), -->
+<!--      type = "l", lwd = 1.5, -->
+<!--      ylab="Custo", xlab = "w: largura da caixa") -->
+<!-- ``` -->
+
+<!-- # Qual a largura da caixa que minimiza o custo?  -->
+
+<!-- ```{r fig.align="left", out.width = '30%', out.height = '20%', echo=FALSE} -->
+<!-- knitr::include_graphics("image/WolframAlpha.png") -->
+<!-- ``` -->
+
+<!-- [derivative .3*(.08/w+4*w^2), w>0](https://www.wolframalpha.com/input?i=derivative+.3*%28.08%2Fw%2B4*w%5E2%29%2C+w%3E0){target="_blank"}  -->
+
+<!-- Obtemos que a derivada da função é: -->
+
+<!-- $$2.4w-\dfrac{0.024}{w^2},\;w>0$$. -->
+
+<!-- Para obter o valor da largura que minimiza o custo total, $w_{min}$, é necessário igualar a derivida a zero: -->
+
+<!-- ```{r fig.align="left", out.width = '30%', out.height = '20%', echo=FALSE} -->
+<!-- knitr::include_graphics("image/WolframAlpha.png") -->
+<!-- ``` -->
+
+<!-- [solve for w: 2.4 w-0.024/w^2=0, w>0](https://www.wolframalpha.com/input?i=solve+for+w%3A+2.4+w-0.024%2Fw%5E2%3D0%2C+w%3E0){target="_blank"}  -->
+
+<!-- Igualando a derivada a 0, temos que $w_{min} = 10^{-\frac{2}{3}} \approx 0.2154$. -->
+
+<!-- O custo mínimo de 0.1671 é obtido pelo seguinte comando: -->
+
+<!-- ```{r fig.align="left", out.width = '30%', out.height = '20%', echo=FALSE} -->
+<!-- knitr::include_graphics("image/WolframAlpha.png") -->
+<!-- ``` -->
+
+<!-- [0.3 (0.08/w + 4 w^2) /. w=10^(-2/3)](https://www.wolframalpha.com/input?i=0.3+%280.08%2Fw+%2B+4+w%5E2%29+%2F.+w%3D10%5E%28-2%2F3%29){target="_blank"}  -->
+
+<!-- ``` {r out.width='45%', echo=FALSE} -->
+<!-- w <- seq(0,1,by=.01) -->
+<!-- c <- .3*(.08/w+4*w^2) -->
+<!-- plot(w, c, -->
+<!--      ylim=c(0,.5), xlim=c(0,.5), -->
+<!--      type = "l", lwd = 2, lty=1, -->
+<!--      ylab="Custo", xlab = "w: largura da caixa") -->
+<!-- w_min <- 0.215443 -->
+<!-- c_min <- .3*(.08/w_min+4*w_min^2) -->
+<!-- m <- 2.4*w_min-0.024/(w_min^2) -->
+<!-- points(w_min, c_min, pch=21, bg="red", cex=1.2) -->
+<!-- curve(m*(x-w_min)+c_min, 0, 0.5, add=TRUE, lty=1) -->
+<!-- ``` -->
+
+# Estrutura da teoria evolutiva  
+
+O princípio do uniformitarianismo, de [Charles Lyell](https://en.wikipedia.org/wiki/Charles_Lyell){target="_blank"}, foi central para o desenvolvimento do pensamento darwinista sobre a seleção natural. 
+Essa teoria sugere que as transformações geológicas não são fruto de grandes catástrofes, mas sim do efeito cumulativo de processos que ocorrem ainda hoje, em igual intensidade. 
+
+```{r  out.width='20%', echo=FALSE, fig.cap="Charles Lyell"}
+knitr::include_graphics("image/Lyell.jpg")
+```
+
+[Charles Darwin](https://en.wikipedia.org/wiki/Charles_Darwin){target="_blank"} percebeu que as características (morfológicas e comportamentais) dos seres vivos variavam. 
+
+A chave para explicar essa variabilidade no longo prazo era aplicar a ideia do uniformitarianismo às populações de animais e plantas, supondo que suas características afetavam quais variantes iriam prosperar e quais iriam desaparecer.
+
+Se acompanharmos essas pequenas mudanças em períodos curtos de tempo, podemos explicar efeitos grandes, que se desdobram no longo prazo. 
+
+Todos os modelos deste livro se baseiam nesta ideia.
+
+Os indivíduos são produto da sociedade em que vivem? Ou a sociedade é produto dos indivíduos? 
+
+Em outras áreas, é comum se optar por uma das alternativas (e.g., sociologia de Durkheim, microeconomia). 
+
+No entanto, **modelos populacionais** *(Population dynamics and Evolutionary Game Theory)* permitem uma explicação inconsútil e significativa nos dois níveis. 
+
+Esses modelos nos privam de escolher entre explicações atomistas ou em nível grupal.
+
+# O modelo de seleção por viabilidade
+
+Ao longo esta disciplina, construiremos modelos de *seleção por viabilidade*, uma forma de seleção natural no qual as mudanças resultam de diferenças na probabilidade de sobrevivência até a idade reprodutiva (adulto). 
+
+Para construir um modelo evolutivo, precisamos de: 
+
+1. Uma descrição da *população*, incluindo o número total de indivíduos e a proporção de indivíduos por variante genotípica.
+
+1. Ao menos duas *variantes hereditárias*, essas variantes podem ser genotípicas.
+
+1. Um *ciclo vital*, i.e., uma descrição dos eventos individuais que afetam a probabilidade de sobrevivência até a idade reprodutiva e a proliferação das variantes genotípicas.
+
+# O modelo de seleção por viabilidade
+
+```{r  out.width='80%', out.height = '20%', echo=FALSE, fig.cap="Figura 1.1 Ciclo de vida no modelo de seleção por viabilidade"}
+knitr::include_graphics("image/Fig_1_1.png")
+```
+
+## Premissas e definições do modelo
+
+* População grande de $n$ organismos haploides com reprodução assexuada (genótipo = fenótipo)
+* Há apenas duas variantes genotípicas: A e B
+* Gerações discretas: os indivíduos nascem ao mesmo tempo e se reproduzem ao mesmo tempo
+* $n$: número total de zigotos (genótipos A e B) na população no momento $t=0$
+* $p = (\text{número de zigotos A em } t=0)/n$
+  + $p$: proporção da variante A no momento $t$ (*state variable*)
+  + $1-p$: proporção do genótipo B em $t=0$
+* $V(A)$ e $V(B)$: probabilidades de que os zigotos de cada tipo sobrevivam até a fase adulta (*Viability*, *payoff*) 
+* $V(A) > V(B)$: genótipo A é mais provável de sobreviver do que o B
+
+## Premissas e definições do modelo
+
+* $\bar{w}=p V(A) + (1-p) V(B)$: aptidão (*fitness*) média da população
+* $z(A)$ e $z(B)$: quantidades médias de zigotos produzidas pelos genótipos A e B adultos (fertilidade, sucesso reprodutivo)
+* $z(A) = z(B) = z$
+* $W(A) = V(A) z(A)$ e $W(B) = V(B) z(B)$: aptidões (*fitnesses*) dos genótipos A e B, respectivamente
+
+$$\large Aptidão = Viabilidade*Fertilidade$$
+
+* $\bar{w} = p W(A) + (1 – p) W(B)$: aptidão (*fitness*) média da população
+
+# Variável de estado em sistema dinâmico
+
+```{r  out.width='50%', out.height = '20%', echo=FALSE, fig.cap="Figura 1.1 Representação estilizada de um sistema dinâmico"}
+knitr::include_graphics("image/Fig_1_2.png")
+```
+
+A variável de estado descreve o estado de um sistema dinâmico e é suficiente para predizê-lo. 
+
+Em modelo de genética de populações, o número de variáveis de estado é uma unidade menor do que o número de alelos na população. 
+
+Por exemplo, no nosso caso, temos dois alelos (A e B) e uma variável de estado $p_A$. 
+
+$p_A$ nos informa sobre a proporção do genótipo A e sobre a proporção de B ($1-p_A$). 
+
+Se houver três genótipos, digamos A, B e C, temos duas variáveis de estado: $p_A$ e $p_B$. 
+
+A proporção de C é simplesmente $1-p_A-p_B$.
+
+# Modelo de seleção por viabilidade
+
+* Número de adultos A = $npV(A)$
+* Número de adultos B = $n(1-p)V(B)$
+* $p'$ é a proporção do genótipo A na fase adulta na geração $t=0$.
+
+\begin{eqnarray}
+\label{eq:plin}
+\begin{aligned}[b]
+p'&= \dfrac{npV(A)}{npV(A)+n(1-p)V(B)} \\[0.2cm]
+&= \dfrac{pV(A)}{pV(A)+(1-p)V(B)} \\[0.2cm]
+\end{aligned}
+\end{eqnarray}
+
+Veja que $p'$ é função de $p$, $V(A)$ e $V(B)$. Isto signfica que o número de adultos com genótipo A ao final da geração $t=0$ depende do número de zigotos com genótipo A e da razão das viabilidades.
+
+## Razão das viabilidades 
+
+Na equação anterior, dividimos o numerador e o denominador por $pV(A)$, obtendo: 
+
+\begin{eqnarray}
+\label{eq:pdivVA}
+\begin{aligned}[b]
+p'&= \dfrac{\dfrac{pV(A)}{pV(A)}}{\dfrac{pV(A)+(1-p)V(B)}{pV(A)}} \\[0.3cm]
+&= \dfrac{1}{1+{\dfrac{1-p}{p}}{\dfrac{V(B)}{V(A)}}}
+\end{aligned}
+\end{eqnarray}
+
+* $p''$ é a proporção de zigotos A no início da geração $t=1$. 
+
+Essa proporção será igual a $p'$. 
+
+Veja a demonstração de que $p'' = p'$, sendo $z$ o número de zigotos gerados por adulto: 
+
+\begin{eqnarray}
+\label{eq:p2lin}
+\begin{aligned}[b]
+p'' &= \dfrac{\text{(número de adultos A)}\,z}{\text{(número de adultos A)}\,z \, + \, \text{(número de adultos B)}\,z} \\[0.2cm] 
+&= \dfrac{pV(A)}{pV(A)+(1-p)V(B)} \\[0.2cm]
+&= p'\qquad \text{(CQD)}
+\end{aligned}
+\end{eqnarray}
+
+Essa igualdade  $p'' = p'$ expressa uma propriedade da **dinâmica do replicador**: os adultos com genótipos A e B se reproduzem a uma mesma taxa $z$. 
+Isso garante que a proporção de zigotos A e B na geração $t$ é igual à propoção de adultos na geração $t-1$.
+
+# Box 1.1 Derivando a equação de diferença no modelo de seleção por viabilidade 
+
+A variável ${\Delta}p$ (ou $p''-p$) é igual à variação na frequência do fenótipo A entre duas gerações. 
+
+\begin{eqnarray}
+\label{eq:delta_p}
+\begin{aligned}[b]
+{\Delta}p &= p''- p \\[0.2 cm]
+&= \dfrac{p V(A)}{pV(A)+(1-p)V(B)}-p \\[0.2 cm]
+&= p (1-p) \; \dfrac{V(A) - V(B)}{pV(A)+(1-p)V(B)}
+\end{aligned}
+\end{eqnarray}
+
+# Box 1.1 em WolframAlpha 
+
+```{r fig.align="left", out.width = '30%', out.height = '20%', echo=FALSE}
+knitr::include_graphics("image/WolframAlpha.png")
+```
+
+[p V(A)/(p V(A) + (1-p) V(B)) - p](https://www.wolframalpha.com/input?i=p+V%28A%29%2F%28p+V%28A%29+%2B+%281-p%29+V%28B%29%29+-+p){target="_blank"} 
+
+Obtemos: 
+
+`-((-1 + p) p (V(A) - V(B)))/(p V(A) + (1 - p) V(B))`
+
+Equivalentemente:
+
+$$-\dfrac{(-1+p)p(V(A)-V(B))}{pV(A)+(1-p)V(B)}$$
+
+Ou:
+
+$$p(1-p)\dfrac{V(A)-V(B)}{pV(A)+(1-p)V(B)}$$
+
+# Significado de ${\Delta}p$ 
+
+$$\LARGE{\Delta}p = \;\; p(1-p) \;\; \dfrac{V(A)-V(B)}{\bar{w}}$$ 
+
+Sendo que: 
+
+* $\bar{w} = pV(A)+(1-p)V(B)$ ou viabilidade média ou a aptidão (*fitness*) média da população.
+* $p(1-p)$ é a variância genotípica ([variância de uma variável aleatória de Bernoulli](https://en.wikipedia.org/wiki/Bernoulli_distribution){target="_blank"}).
+* $\dfrac{V(A)-V(B)}{\bar{w}}$ é a aptidão (*fitness*) diferencial relativa.
+
+* ${\Delta}p > 0$, pois $V(A) > V(B)$ é uma das premissas do modelo.
+
+**Conclusão:** Quanto maior a variância genotípica ou a aptidão diferencial relativa, maior a força da seleção natural (i.e., maior ${\Delta}p$) 
+
+# Maximização de ${\Delta}p$ 
+
+À primeira vista, pode parecer que o ponto de máximo de ${\Delta}p$ é sempre coincidente com $p=0.5$, pois a variância genotípica é máxima, ou seja, há muitas vidas para serem ceifadas. 
+
+No entanto, note que o denominador da aptidão diferencial relativa ($\bar{w}$) é igual a $pV(A)+(1-p)V(B)$, ou seja, ele mesmo depende de $p$.
+
+Essa dependência entre variância genotípica e aptidão diferencial relativa pode fazer com que o valor que maximiza $p$ seja **diferente de 0.5**.
+
+```{r fig.align="left", out.width = '90%', out.height = '60%', echo=FALSE}
+knitr::include_graphics("image/Deltapxp.png")
+```
+
+**Conclusão:** 
+
+Se $V(A)$ e $V(B)$ estão entre 0 e 1, e $V(A) > V(B)$, o  $p$ que maximixa $\Delta p$ é maior que 0 e menor que 0.5. 
+
+Sendo que, à medida que $V(A)-V(B)$ aumenta, o $p_{max}$ diminui.
+
+Podemos interpretar essa relação como uma disputa entre *quantidade* e *qualidade*. 
+
+Se a diferença entre $V(A)$ e $V(B)$ aumenta (i.e., aumenta a diferença de *qualidade* entre A e B), o $p$ necessário para maximizar a força da seleção natural é menor. 
+
+Por outro lado, se a diferença de *qualidade* entre A e B diminui, o $p$ que maximiza a força da seleção natural se aproxima de 0.5.
+
+# Modelo de seleção por viabilidade
+
+Podemos escrever a relação entre a proporção de zigotos em duas gerações consecutivas ($t$ e $t-1$) por meio de uma equação recursiva (ou equação de diferença finita).
+
+$$\Large p_t=\dfrac{p_{t-1}V(A)}{p_{t-1}V(A)+(1-p_{t-1})V(B)}$$
+
+# Box 1.3 Solução explícita da fórmula recursiva
+
+Primeiro, veja que o número de zigotos A no momento $t+1$ é:
+
+$$n_{A,t+1}=z\,n_{A,t}\,V(A)$$
+
+Se quisermos estender o raciocínio à geração seguinte, temos: 
+
+\begin{eqnarray}
+\label{eq:n_Axt}
+\begin{aligned}[b]
+n_{A,t+2} &= z\,n_{A,t+1}\,V(A) \\
+&= z\{z\,n_{A,t}\,V(A)\}V(A) \\
+&= n_{A,t}(z\,V(A))^2
+\end{aligned}
+\end{eqnarray}
+
+Veja que o expoente coincide com o número de gerações adicionais a partir de $t=0$. Generalizando: 
+
+$$n_{A,t} = n_{A,0}\left(z\,V(A)\right)^t$$
+
+Portanto, a proporção de zigotos A em $t$, $p_t$, é: 
+
+\begin{eqnarray}
+\label{eq:p_t}
+\begin{aligned}[b]
+p_t &= \dfrac{n_{A,t}}{n_{A,t} + n_{B,t}} \\[0.2cm]
+&= \dfrac{n_{A,0}V(A)^t}{n_{A,0}V(A)^t + n_{B,0}V(B)^t} \\[0.2cm]
+&= \dfrac{1}{1+{1 - p_0 \over p_0} \left({V(B) \over V(A)}\right)^t }
+\end{aligned}
+\end{eqnarray}
+
+# Formato da função $p_t$
+
+## Curva de crescimento logística 
+
+A função logística é expressa por: 
+
+$$\Large f(t) = \dfrac{a}{1+be^{ct}}+d$$
+
+Sendo que: 
+
+* $e \approx  2.7183$: número irracional de Euler 
+* $a>0$
+* $b>0$
+* $d$: assíntota horizontal inferior 
+* $a+d$: assíntota horizontal superior
+* $\left(-\dfrac{\ln b}{c},\dfrac{a}{2}\right)$: ponto de inflexão
+* $c<0$: função crescente
+
+## Formato da função $p_t$
+
+$$\Large p_t = \dfrac{1}{1+\exp \left(- \left( \ln{\dfrac{p_0}{1-p_0}}+\ln{\dfrac{V(A)}{V(B)}t}\right)\right)}$$
+
+Sendo que:
+
+* $a=1$
+* $b=\exp\left(-\ln{\dfrac{p_0}{1-p_0}}\right)$
+* $c=-\ln\dfrac{V(A)}{V(B)}$
+  * $V(A) > V(B) \therefore c<0$
+* $d=0$
+* $a+d=1$
+* $\left(-\dfrac{\ln{\dfrac{p_0}{1-p_0}}}{\ln\dfrac{V(A)}{V(B)}},\dfrac{1}{2}\right)$
+
+# Ponto de inflexão em R
+
+Podemos representar graficamente o ponto de inflexão por meio do *script R*:
+
+```{r eval=FALSE,code=readLines("Cap1_Logistic.R")}
+```
+
+## Conclusões 
+
+1. O ponto de inflexão é o ponto em que a velocidade da seleção natural é máxima ($\Delta p_{max}$).
+1. O resultado mostra que, se $V(A)>V(B)$, é uma questão de tempo (gerações) até que o genótipo A seja comum e que B seja extinto.
+
+# Ponto de inflexão em R
+
+```{r echo=FALSE,code=readLines("Cap1_Logistic.R")}
+```
+
+<div class='right' style='float:right;width:15%'>
+
+```{r fig.align="left", warning=FALSE, out.width="100%", echo=FALSE}
+knitr::include_graphics("image/TooTec.jpeg")
+```
+
+</div>
+
+<div class='left' style='float:left;width:85%'>
+
+```{r fig.align="left", warning=FALSE, out.width="15%", echo=FALSE}
+texto <- paste0("Observe que o, $t$ do ponto de inflexão obtido é ", round(t_inflex, 3), ". No entanto, lembre-se que nossas gerações ($t\\in\\mathbb{N}$) são discretas por definição, enquanto que o $t$ na função logística é um número real ($t\\in\\mathbb{R_+}$).")
+dt_table <- as.data.frame(matrix(data=texto,ncol=1,nrow=1))
+names(dt_table) <- rep("",ncol(dt_table))
+k <- kableExtra::kbl(dt_table, toprule = "", midrule = "", bottomrule = "") 
+k <- kableExtra::kable_paper(k, full_width=FALSE) 
+k <- kableExtra::row_spec(k, 0, background = "#FFFFFF")
+k <- kableExtra::column_spec(k, 1, width = "7in", background = "#CAE0AB")
+k <- kableExtra::kable_styling(k, bootstrap_options = c("responsive"),
+                          latex_options = "HOLD_position")
+k
+```
+
+</div>
+
+# Fundamentos de métodos quantitativos (2011)
+
+```{r out.width = '50%', echo=FALSE}
+knitr::include_graphics("image/FundMetQt.jpg")
+```
+
+O Capítulo 4: Equação de diferença finita ensina a lidar com funções discretas utilizando WolframAlpha e SCILAB.
+
+## Links: 
+
+* [Fundamentos de métodos quantitativos](https://www.amazon.com.br/Fundamentos-M%C3%A9todos-Quantitativos-Oliveira-Siqueira/dp/8502116797/ref=cm_cr_arp_d_pl_foot_top?ie=UTF8){target="_blank"}
+* [Manual de soluções](https://www.researchgate.net/publication/350443394_Fundamentos_de_Metodos_Quantitativos_-_Solucoes_das_Questoespdf){target="_blank"}
+
+# $t$ discreto vs. $t$ contínuo: script R
+
+```{r eval=FALSE,code=readLines("Cap1_LogisticCont.R")}
+```
+
+# $t$ discreto vs. $t$ contínuo: saída R
+
+```{r echo=FALSE,code=readLines("Cap1_LogisticCont.R")}
+```
+
+A medida que a razão das viabilidades se aproxima de 1, o $t$ de inflexão aumenta. 
+
+O aumento no número de gerações cria uma ilusão de continuidade na curva logística. 
+
+Na prática, uma solução contínua pode substituir uma solução discreta. 
+
+# Viabilidade e Fertilidade (*fitness*)
+
+Agora que exploramos à exaustão o modelo de seleção por viabilidade, vamos considerar um modelo de seleção por viabilidade **e fertilidade**, i.e., $z(A)\ne z(B)$.
+
+## Box 1.2. Seleção, viabilidade e fertilidade 
+
+$$ \Delta p'' = \dfrac{pV(A)z(A)}{pV(A)z(A)+(1-p)V(B)z(B)} $$
+
+$$\Large \Delta p = p(1-p)\dfrac{W(A)-W(B)}{\bar{w}} $$
+
+Sendo que: 
+
+* $W(A)$: Aptidão (*fitness*) média do genótipo A, $V(A)z(A)$.
+* $W(B)$: Aptidão (*fitness*) média do genótipo B, $V(B)z(B)$.
+
+Observe que $V(A) > V(B)$ não implica que $W(A) > W(B)$ e vice-versa.
+
+# Análise de equilíbrio
+
+[Stable, Unstable, and Neutral Equilibrium](https://www.youtube.com/watch?v=4rG9u478X1Q){target="_blank"}
+
+```{r out.width = '90%', echo=FALSE}
+knitr::include_graphics("image/Equil.png")
+```
+
+<!--
+Para testar a relação entre Deltap e p em função da diferença entre V(A) e V(B), usamos o script Deltapmax.R, disponível na pasta do Drive.
+-->
+
+# Mais sobre análise de equilíbrio 
+
+As demonstrações das fórmulas de análise de equilíbrio podem ser encontradas no seguinte livro:
+
+```{r out.width = '30%', echo=FALSE}
+knitr::include_graphics("image/OttoDay.jpg")
+```
+
+Otto, SP & Day, T (2007) _A biologist’s guide to mathematical modeling in ecology and evolution_. NJ: Princeton.
+
+_Chapter 5: Equilibria and stability analyses: one-variable models_
+
+# Análise de equilíbrio 
+
+Para discutirmos pontos de equilíbrio, vamos retomar a fórmula de $\Delta p$, que expressa a força da seleção natural. 
+
+\begin{eqnarray}
+\label{eq:mod_viab}
+\begin{aligned}[b]
+\Delta p &= p(1-p) \dfrac{V(A)-V(B)}{\bar{w}} \\
+\end{aligned}
+\end{eqnarray}
+
+Observe que $\Delta p = 0$ pode ser dividido em dois fatores: (1) $p(1-p)$ ou variância genotípica; e (2) $\dfrac{V(A)-V(B)}{\bar{w}}$ ou aptidão diferencial relativa. 
+
+Sob a suposição que $V(A) > V(B)$, a aptidão diferencial relativa é estritamente positiva. 
+
+Por isso, a única possibilidade de que $\Delta p = 0$ é que a variância genotípica seja nula ($p=0$ ou $p=1$). 
+
+Denominamos os valores da variável de estado $p$ que produzem equilíbrio dinâmico de $\hat{p}$. 
+
+\begin{eqnarray}
+\label{eq:mod_viabalt}
+\begin{aligned}[b]
+\Delta p = \hat{p}(1-\hat{p}) \dfrac{V(A)-V(B)}{\bar{w}} = 0 \\
+\end{aligned}
+\end{eqnarray}
+
+Nessa situação, a força da seleção natural é nula. 
+
+## Solução em WolframAlpha
+
+```{r fig.align="left", out.width = '30%', out.height = '20%', echo=FALSE}
+knitr::include_graphics("image/WolframAlpha.png")
+```
+
+[solve for p: p (1-p) (V(A)-V(B))/(p V(A)+(1-p) V(B))=0, 1>=p>=0, 1>V(A)>0, 1>V(B)>0](https://www.wolframalpha.com/input?i=solve+for+p%3A+p+%281-p%29+%28V%28A%29-V%28B%29%29%2F%28p+V%28A%29%2B%281-p%29+V%28B%29%29%3D0%2C+1%3E%3Dp%3E%3D0%2C+1%3EV%28A%29%3E0%2C+1%3EV%28B%29%3E0){target="_blank"} 
+
+produz a solução $p=0$ ou $p=1$, se $V(A) \ne V(B)$.
+
+# Análise de estabilidade linear 
+
+Além do método gráfico, podemos determinar o ponto de equilíbrio algebricamente usando um algoritmo em três passos: 
+
+1. Primeiramente, escrever a fórmula de $p'$ em função de $p$, usando a Equação 1.1 do livro: 
+
+$$\Large p'= p''=\dfrac{pV(A)}{pV(A)+(1-p)V(B)} = \dfrac{pV(A)}{\bar{w}}$$
+
+2. Encontrar o valor da derivada quando $p=\hat{p}$, obtendo o ângulo da reta tangente à função recursiva no ponto de equilíbrio $\hat{p}$.
+
+3. Se o valor estiver entre $-1$ e $1$, o ponto de equilíbrio é estável.
+
+$$ \Large-1 < \dfrac{dp'}{dp}\Huge|\normalsize \hat{p}\Large < 1  $$
+
+# Solução analítica em WolframAlpha 
+
+Primeiramente, encontramos a derivada da função recursiva em p:
+
+```{r fig.align="left", out.width = '30%', out.height = '20%', echo=FALSE}
+knitr::include_graphics("image/WolframAlpha.png")
+```
+
+[simplify derivative p a / (p a + (1-p) b)](https://www.wolframalpha.com/input?i=simplify+derivative+p+a+%2F+%28p+a+%2B+%281-p%29+b%29){target="_blank"}
+
+Que resulta em `(V(A) V(B))/(p V(A) + (1 - p) V(B))^2`, ou:
+
+$$\dfrac{dp'}{dp}=\dfrac{V(A) V(B)}{(p V(A) + (1 - p) V(B))^2}$$
+
+Sabendo que os pontos de equilíbrio são $0$ e $1$, podemos calcular a derivada em cada um dos pontos de equilíbrio. 
+
+Para $\hat{p}=0$, temos:
+
+$$\dfrac{dp'}{dp}\Large|\normalsize {\hat{p}=0}=\dfrac{V(A)}{V(B)}$$
+
+Se $V(A)>V(B)$, $\hat{p}=0$ é ponto de equilíbio instável, pois $\Large\frac{dp'}{dp}\LARGE|\normalsize {\hat{p}=0}\Large>1$.
+
+<br>
+
+Para $p=1$ usamos:
+
+$$\dfrac{dp'}{dp}\Large|\normalsize {\hat{p}=1}=\dfrac{V(B)}{V(A)}$$
+
+Se $V(A)>V(B)$, $\hat{p}=1$ é ponto de equilíbio estável, pois $\Large0<\Large\frac{dp'}{dp}\LARGE|\normalsize {\hat{p}=1}\Large<1$.
+
+# Análise gráfica 
+
+```{r fig.align="left", warning=FALSE, out.width="60%",echo=FALSE}
+source("Cap1_eiras.pduaslinhas_eq.R")
+VA <- 0.8
+VB <- 0.5
+p0 <- c(0.1,0.5)
+pdualinhas_eq(VA,VB,p0)
+```
+
+# Simulação por agentes
+
+O modelo de simulação computacional baseado em agentes está implementado em [eiras.viabilidade.R](eiras.viabilidade.R){target="_blank"}. 
+
+Nem todas as suposições têm correspondência com a solução analítica, pois a população é obrigatoriamente finita. 
+
+Neste modelo, cria-se uma arena bidimensional na qual são colocados agentes e alimento. 
+
+A simulação evolui em passos discretos (ciclos). 
+
+Aqui existe sobreposição de gerações. 
+
+Configuram-se:
+
+* o tamanho da arena, com dimensões $env.x$ x $env.y$.
+* a quantidade de pontos de alimento que são distribuídos por ciclo no ambiente ($v.por.ciclo$).
+* o valor de um ponto de alimento colocado no ambiente ($v$).
+* a distância máxima que cada agente alcança o alimento ($d$).
+* a distância máxima de deslocamento ($s$) que cada agente percorre, em qualquer direção, a cada ciclo.
+* a mortalidade extrínseca ($probmorte.ind$).
+* a proporção de gametas viáveis que cada tipo produz ($z(A) \ne z(B)$).
+
+Supomos que há dois tipos de indivíduos ($A$ e $B$), ambos sujeitos à mesma mortalidade extrínseca ($V(A)=V(B)$); esta mortalidade é simulada por uma probabilidade de remoção do indivíduo a cada ciclo: se esta probabilidade é igual a 0.005, os indivíduos vivem, em média, 200 ciclos ($200=1/0.005$). 
+
+Alternativamente, pode-se controlar a população impondo um gasto metabólico por ciclo ($metabolismo.ind$), de forma que o indivíduo que não conseguir absorver alimento suficiente é removido da simulação. 
+
+O efeito populacional é similar.
+
+A cada ciclo:
+
+* todos os agentes se deslocam de sua posição corrente ($x_i$,$y_i$) até uma distância aleatória máxima, ocupando nova posição dentro da área definida por  ($x_i \pm s$,$y_i \pm s$).
+* $v.por.ciclo$ pontos de alimento são distribuídos aleatoriamente dentro da arena. 
+* cada indivíduo tem uma oportunidade de absorver um ponto de alimento, desde que este esteja dentro da área definida por ($x_i \pm d$,$y_i \pm d$); cada ponto absorvido incrementa a reserva alimentar do indivíduo em $v$.
+* todos os indivíduos reduzem sua reserva alimentar em $metabolismo.ind$.
+* cada indivíduo tem probabilidade $probmorte.ind$ de ser removido do ambiente (mortalidade extrínseca).
+* indivíduos que têm reserva alimentar $\le 0$ são removidos do ambiente (mortalidade por fome).
+* indivíduos podem utilizar até 10% de sua reserva alimentar para gerar um zigoto; a probabilidade de gerar o zigoto é proporcional à reserva alimentar.
+* a proporção dos zigotos viáveis é definida de acordo com o genótipo, dadas por $z(A)$ e $z(B)$.
+* os zigotos restantes são transformados em novos indivíduos incorporados à população; estes indivíduos têm reserva alimentar igual aos 10% da reserva alimentar que lhes é transferida do indivíduo parental.
+
+Iniciamos a simulação com 100% de indivíduos $B$, que tinham $z(B)=0.5$. Após 2000 ciclos, quando a população já havia estabilizado, apareceu um mutante $A$, com $z(A)=0.8$. 
+
+O resultado de uma instância da simulação pode ser apresentado graficamente: 
+
+<video width="800" height="600" controls> 
+<source src="image/R.mp4" type="video/mp4"> 
+</video>
+
+```{r, echo=FALSE, exec=FALSE}
+source("eiras.viabilidadeplot.R")
+viabilidadeplot("tables/viabilidade_res.xlsx",png=TRUE)
+```
+
+```{r out.width = '70%', echo=FALSE}
+knitr::include_graphics("image/viabilidade_res.xlsx_abs.png")
+knitr::include_graphics("image/viabilidade_res.xlsx_prc.png")
+```
+
+O primeiro gráfico mostra a evolução em números absolutos de indivíduos. Nota-se que o genótipo $A$ substituiu $B$ quase completamente em 15000 ciclos. Além disto, como $z(A)>z(B)$, a população total aumentou. 
+
+No segundo gráfico apresentamos a mesma informação expressa como proporção dos dois genótipos. Claramente, o crescimento de $p_{A}$ (proporção de genótipos $A$), nesta simulação por agentes, segue uma logística da mesma forma que a solução analítica previra.
+
+# Replicação não genética
+
+Será que podemos chamar de replicação memética?
+
+Seja qual for o nome, é interessante refletir sobre as diferenças entre a proposta original de Darwin e o Neodarwinismo. Na teoria da seleção natural original a evolução ocorre porque existe reprodução com variação e um mecanismo de favorecimento das variantes mais capazes de reproduzir subsequentemente. Darwin nada sabia sobre genética. Ao integrarmos sua teoria com o que se veio a conhecer sobre mecanismos de transmissão de características biológicas, ganhou-se uma base quantitativa muito mais sólida para o entendimento da herança genética mas, também, perdeu-se em abrangência. O neodarwinismo é solidamente ligado à evolução da forma e do comportamento condicionados ao que pode ser herdado por mecanismos genéticos. A vantagem dos mecanismos genéticos é criar um 'reset' para a prole, criando um organismo que tem oportunidade de viver até a idade reprodutiva sem os eventuais danos sofridos por seus antepassados.
+
+No entanto, uma das habilidades que tais mecanismos biológicos também proveram, especialmente em animais com cérebros mais desenvolvidos, é a cultura, no sentido de que comportamentos podem ser transmitidos às gerações seguintes cumulativamente em paralelo à transmissão genética, de forma que novos indivíduos não precisam percorrer todo o caminho de acertos-e-erros de seus antepassados até encontrar soluções melhores para sua atuação no ambiente e, consequentemente, aumentar seu _fitness_. É possível conceber que o darwinismo original, por se aplicar a quaisquer propagações com variantes, seja melhor inspiração para a herdabilidade cultural. Este tipo de herança, sem 'reset', influencia a prole com o que trouxer de prejuízo e o que houver de benefício acumulado pelos antepassados. Por tais diferenças, deve ser modelada com diferentes pressupostos, para que possamos ter ideia de seu alcance na evolução das espécies.
+
+O livro que adotamos como guia para esta disciplina descreve um primeiro modelo simples nesta linha, no qual comportamentos podem ser transmitidos entre membros de uma mesma geração. Os contatos entre indivíduos, em vez de levarem à reprodução, podem levar um dos indivíduos a adotar, por imitação, o comportamento do outro. Admitindo-se que comportamentos diversos sejam, de alguma forma, mais ou menos associados com melhor desempenho do indivíduo em seu ambiente, e que a probabilidade de ser imitado seja proporcional ao desempenho, teremos um mecanismo não-genético de propagação dos comportamentos e potencial espalhamento dos mesmos em uma população.
+
+A principal diferença desta situação com a descrita pelo modelo de evolução genotípica descrita na situação anterior é que, aqui, pela primeira vez, teremos que lidar com a formação de díades: a propagação de um comportamento depende da interação entre dois indivíduos. Supondo que há dois comportamentos envolvidos, $A$ e $B$, os encontros produzirão três possibilidades de combinação: $AA$, $AB$ ou $BA$, e $BB$.
+
+Para o modelo analítico adotam-se as mesmas suposições básicas, a saber população infinita e panmixia, de forma que a probabilidade de cada tipo de encontro somente depende das respectivas proporções de $A$ e $B$. Tomando $p$, novamente, como a proporção do comportamento de referência $A$, temos as seguintes probabilidades:
+
+* $Pr(A,A) = p^2$
+* $Pr(A,B) = p(1-p)$
+* $Pr(B,A) = Pr(A,B)$
+* $Pr(B,B) = (1-p)^2$
+
+Isto é apenas um polinômio de segundo grau, posto que o total de indivíduos (100% ou 1) é dado por $p^2 + 2p(1-p) + (1-p)^2  = 1$. Este mesmo polinômio foi adotado para o Equilíbrio de Hardy-Weinberg que descreve a proporção de genótipos para uma população de organismos diplóides que têm dois alelos, $A$ e $B$.
+
+# Tabela de probabilidades
+
+A tabela com as probabilidades do indivíduo focal (nas linhas) mudar para o comportamento de seu contatante será apresentada a seguir, mas antes vamos retomar a definição da variável de estado e dos parâmetros: 
+
+## Variavel de estado $p$
+
+A principal diferença desta situação com a descrita pelo modelo de evolução genotípica descrita na situação anterior é que, aqui, pela primeira vez, teremos que lidar com a formação de díades: a propagação de um comportamento depende da interação entre dois indivíduos. Supondo que há dois comportamentos envolvidos, $A$ e $B$, os encontros produzirão três possibilidades de combinação: $AA$, $AB$ ou $BA$, e $BB$.
+
+Para o modelo analítico adotam-se as mesmas suposições básicas, a saber população infinita e panmixia, de forma que a probabilidade de cada tipo de encontro somente depende das respectivas proporções de $A$ e $B$. Tomando $p$, novamente, como a proporção do comportamento de referência $A$, temos as seguintes probabilidades:
+
+* $Pr(A,A) = p^2$
+* $Pr(A,B) = p(1-p)$
+* $Pr(B,A) = Pr(A,B)$
+* $Pr(B,B) = (1-p)^2$
+
+Isto é apenas um polinômio de segundo grau, posto que o total de indivíduos (100% ou 1) é dado por $p^2 + 2p(1-p) + (1-p)^2  = 1$. Este mesmo polinômio foi adotado para o Equilíbrio de Hardy-Weinberg que descreve a proporção de genótipos para uma população de organismos diplóides que têm dois alelos, $A$ e $B$.
+
+## $V(A)$ e $V(B)$: _payoffs_
+
+Os valores de $V(A)$ e $V(B)$, aqui, são os benefícios auferidos pela prática de cada comportamento, assumidos como no caso da seleção de genótipos, como constantes.
+
+## $\beta$: a força da imitação
+
+A novidade aqui é o valor $\beta$: este é um fator de escala que permite regular quão forte é a influência da imitação quando há diferenças entre as recompensas $V(A)$ e $V(B)$: uma forma imaginativa, análoga à força de seleção que atua sobre os fenótipos transmitidos por herança genética. Obviamente, $\beta$ tem restrições. O livro apenas sugere que seja mantido pequeno.
+
+<br>
+
+```{r out.width = '60%', echo=FALSE}
+knitr::include_graphics("./image/imitacoes.png")
+```
+
+<br>
+
+<table
+style="text-align: left; width: 50%; margin-left: auto; margin-right: auto; font-size:80%;"
+border="0" cellpadding="2" cellspacing="2">
+<tbody>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">A</span><br>
+</td>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">B</span><br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">A</span></td>
+<td style="vertical-align: top; text-align: center;">$0$<br>
+</td>
+<td style="vertical-align: top; text-align: center;">${1 \over 2} + {\beta}\{V(B)-V(A)\}$<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">B</span><br>
+</td>
+<td style="vertical-align: top; text-align: center;">${1 \over 2} + {\beta}\{V(A)-V(B)\}$<br>
+</td>
+<td style="vertical-align: top; text-align: center;">$0$<br>
+</td>
+</tr>
+</tbody>
+</table>
+
+<br>
+Naturalmente, existe a probabilidade do indivíduo manter seu comportamento atual:
+<br>
+
+<table
+style="text-align: left; width: 50%; margin-left: auto; margin-right: auto; font-size:80%;"
+border="0" cellpadding="2" cellspacing="2">
+<tbody>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">A</span><br>
+</td>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">B</span><br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">A</span></td>
+<td style="vertical-align: top; text-align: center;">$1$<br>
+</td>
+<td style="vertical-align: top; text-align: center;">${1 \over 2} + {\beta}\{V(A)-V(B)\}$<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">B</span><br>
+</td>
+<td style="vertical-align: top; text-align: center;">${1 \over 2} + {\beta}\{V(B)-V(A)\}$<br>
+</td>
+<td style="vertical-align: top; text-align: center;">$1$<br>
+</td>
+</tr>
+</tbody>
+</table>
+
+<br>
+O livro monta uma tabela com as frequências de cada comportamento e as probabilidades de mudança de forma mais integrada, similar a esta:
+<br>
+
+<table
+style="text-align: left; width: 100%; margin-left: auto; margin-right: auto; font-size:80%;"
+border="0" cellpadding="2" cellspacing="2">
+<tbody>
+<tr>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">$Focal$</span><br>
+</td>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">$Outro$</span><br>
+</td>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">$Pr(focal,outro)$</span><br>
+</td>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">$Pr(A|focal,outro)$</span><br>
+</td>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">$Pr(B|focal,outro)$</span><br>
+</td>
+</tr>
+
+<tr>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">$A$</span></td>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">$A$</span></td>
+<td style="vertical-align: top; text-align: center;">$p^2$<br>
+</td>
+<td style="vertical-align: top; text-align: center;">$1$<br>
+</td>
+<td style="vertical-align: top; text-align: center;">$0$<br>
+</td>
+</tr>
+
+<tr>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">$A$</span></td>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">$B$</span></td>
+<td style="vertical-align: top; text-align: center;">$p(1-p)$<br>
+</td>
+<td style="vertical-align: top; text-align: center;">${1 \over 2} + {\beta}\{V(A)-V(B)\}$<br>
+</td>
+<td style="vertical-align: top; text-align: center;">${1 \over 2} + {\beta}\{V(B)-V(A)\}$<br>
+</td>
+</tr>
+
+<tr>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">$B$</span></td>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">$A$</span></td>
+<td style="vertical-align: top; text-align: center;">$(1-p)p$<br>
+</td>
+<td style="vertical-align: top; text-align: center;">${1 \over 2} + {\beta}\{V(A)-V(B)\}$<br>
+</td>
+<td style="vertical-align: top; text-align: center;">${1 \over 2} + {\beta}\{V(B)-V(A)\}$<br>
+</td>
+</tr>
+
+<tr>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">$B$</span></td>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">$B$</span></td>
+<td style="vertical-align: top; text-align: center;">$(1-p)^2$<br>
+</td>
+<td style="vertical-align: top; text-align: center;">$0$<br>
+</td>
+<td style="vertical-align: top; text-align: center;">$1$<br>
+</td>
+</tr>
+
+</tbody>
+</table>
+
+As colunas desta tabela são lidas assim:
+
+* colunas 1 e 2: encontro do focal com o outro.
+* coluna 3: a probabilidade deste encontro ocorrer.
+* coluna 4: a probabilidade do indivíduo focal adquirir o comportamento $A$  dado que este encontro ocorreu.
+* coluna 4: a probabilidade do indivíduo focal adquirir o comportamento $B$ dado que este encontro ocorreu.
+
+É fácil perceber que, se $V(A)>V(B)$, quando $A$ encontra $B$ (segunda linha) a probabilidade de permanecer com o comportamento $A$ é maior que $1 \over 2$ na mesma medida em que mudar para $B$ é menor que $1 \over 2$. O contrário acontece quando $B$ encontra $A$ e sua probabilidade maior é mudar para o comportamento $A$. Encontros entre indivíduos de mesmo comportamento não os modificam. Recursivamente, as mudanças de comportamento, portanto, serão enviezadas para $A$ e este comportamento poderá terminar dominando o ambiente.
+
+Algebricamente ainda temos que fazer $\beta>0$ e $-{1 \over 2} < \beta (V(A) - V(B)) < {1 \over 2}$ (ou $-{1 \over 2} < \beta (V(B) - V(A)) < {1 \over 2}$, que é a mesma coisa). 
+
+Podemos usar WolframAlpha para encontrar estes valores:
+
+```{r fig.align="left", out.width = '30%', out.height = '20%', echo=FALSE}
+knitr::include_graphics("image/WolframAlpha.png")
+```
+
+[solve for beta: -0.5 < beta*(A-B) < 0.5, beta>0, A>0, B>0](https://www.wolframalpha.com/input?i=solve+for+beta%3A+-0.5+%3C+beta*%28A-B%29+%3C+0.5%2C+beta%3E0%2C+A%3E0%2C+B%3E0){target="_blank"}
+
+que informa:
+
+* para $V(A)>V(B)$
+
+$$0 < {\beta} < { {1}\over{2\{V(A)-V(B)\}} }$$
+
+* para $V(A)<V(B)$
+
+$$0 < {\beta} < { {1}\over{2\{V(B)-V(A)\}} }$$
+
+Segue-se, portanto, o mesmo raciocínio apresentado anteriormente, computando-se $\Delta p$ e analisando-se os pontos de equilíbro através da equação recursiva de $p'$. Neste caso, colocando-se em forma similar à do exemplo genético, a dinâmica do replicador segue a seguinte fórmula:
+
+$$p' - p = {p^2 + 2p(1-p) \left ( {1 \over 2} + \beta\{V(A)-V(B)\} \right ) - p } \\[0.5cm]
+\Large \Delta p = {p(1-p) { {V(A)-V(B)} \over {(2 \beta)^{-1}}  } }$$
+
+É interessante que, a partir de premissas diferentes, este replicador terá a mesma dinâmica do genético, com os mesmos pontos de equilíbrio e estabilidade descritos para $\hat{p}$.
+
+# Modelo de viabilidade em função de $p$
+
+A notação $V(A)$ e $V(B)$ não estão grafadas assim por acidente ou inconsistência. É uma função, $V()$, tanto no sentido matemático quanto computacional. No modelo desenvolvido, $V()$ recebe um parâmetro, o genótipo $A$ ou $B$ e, de acordo com o que recebe, retorna um valor constante (no primeiro exemplo, respectivamente, $0.8$ ou $0.5$). Em R poderia está implementada em [Vrepl_genetica.R](Vrepl_genetica.R){target="_blank"}.
+
+Podemos utilizar a mesma estrutura do modelo, trocando a função $V()$ por outra. Suponhamos, agora, uma outra possibilidade para a função de viabilidade que mostra um decaimento exponencial, implementada em [Vrepl_genetica_mod.R](Vrepl_genetica_mod.R){target="_blank"}.
+
+Que é equivalente a:
+
+$$\large V(d,p) = e^{-d \cdot p}$$
+
+Podemos ver o formato de $V(d,p)$, na qual $d$ dá o ritmo do decaimento. Para produzirmos um decaimento menos acentuado para o genótipo $A$ do que para o genótipo $B$, mantendo números parecidos, respectivamente os decaimentos $d_A=0.5$ e $d_B=0.8$:
+
+Veja as duas exponenciais negativas construídas por meio do script [eiras.dec.R](eiras.dec.R){target="_blank"}. 
+
+```{r, echo=FALSE, exec=TRUE}
+source("eiras.dec.R")
+
+all_ps <- seq(0,1,length.out=100)
+f <- V(d=0.5, p=all_ps)
+# plot(all_ps,f,
+#      main="Viabilidade para os genótipos\n(exponenciais negativas)",
+#      xlab="p", ylab="V",
+#      xlim=c(0,1),ylim=c(0,1),
+#      lwd=2, type="l")
+# f <- V(d=0.8, p=all_ps)
+# lines (all_ps,f,
+#        lwd=2, lty=2, col="blue")
+legend ("topright",	
+        c("A","B"),
+        lwd=2,	
+        lty=c(1,2),	
+        col=c("black","blue"),
+        bty="n",
+        bg="transparent")	
+```
+
+# Dinâmica do replicador
+
+Desta forma, comparável aos exemplos anteriores, a $V(d_A,p) > V(d_B,p)$ e a seleção, a princípio, favorece $A$. O comportamento da dinâmica deste replicador, cuja fórmula é ajustada para
+
+$$\Delta p = { p (1-p) { {V(d_A,p) - V(d_B,1-p)} \over {p V(d_A,p) + (1-p)V(d_B,1-p)} }}$$
+
+está implementada em [eiras.demoptdec.R](eiras.demoptdec.R){target="_blank"}. Por exemplo, começando com $p_{0} = 0.1$:
+
+```{r, echo=TRUE}
+p0 <- 0.1
+source("eiras.demoptdec.R")
+```
+
+Em seguida, executamos o mesmo *script* com $p_{0} = 0.9$:
+
+```{r, echo=TRUE}
+p0 <- 0.9
+source("eiras.demoptdec.R")
+```
+
+Encontramos um equilíbrio que não vai para um dos extremos, $\hat{p}=0$ ou $\hat{p}=1$.
+
+# Análise de ponto de equilíbrio
+
+Podemos determinar este valor pelo método gráfico. Inicialmente, verificamos o comportamento de $\Delta p$ com [eiras.demodeltapdec.R](eiras.demodeltapdec.R):
+
+```{r, echo=FALSE}
+source("eiras.demodeltapdec.R")
+```
+
+O gráfico mostra, agora, uma curva com ponto de máximo e de mínimo (círculos cheios). Há três pontos assinalados com 'x' que são candidatos a ponto de equilíbrio estável, quando $\Delta p=0$.
+
+Adaptamos, portanto, a função recursiva de $p''$ modificada em [eiras.pduaslinhasdec.R](eiras.pduaslinhasdec.R){target="_blank"}:
+
+$$p'' = { pV(d_A,p) \over {pV(d_A,p) + (1-p)V(d_B,1-p)} }$$
+
+```{r, echo=TRUE}
+source("eiras.pduaslinhasdec.R")
+dA <- 0.5
+dB <- 0.8
+pdualinhasdec(dA,dB)
+```
+
+Os três pontos candidatos, novamente aqui aparecem. Qual(is) é(são) estável(is)? Implementamos [eiras.pduaslinhasdec.R](eiras.pduaslinhasdec.R){target="_blank"}:
+
+```{r, echo=TRUE}
+source("eiras.pduaslinhasdec_eq.R")
+dA <- 0.5
+dB <- 0.8
+pdualinhasdec_eq(dA,dB)
+```
+
+Mostrando que há três pontos de equilíbrio, dos quais apenas $\hat{p}=0.6155$ é estável.
+
+Também podemos verificar o método analítico: 
+
+```{r fig.align="left", out.width = '8%', echo=FALSE}
+knitr::include_graphics("./image/coruja.png")
+```
+
+# Resolvendo a equação de diferença com WolframAlpha
+
+```{r fig.align="left", out.width = '30%', out.height = '20%', echo=FALSE}
+knitr::include_graphics("image/WolframAlpha.png")
+```
+
+[reduce p (1-p)(exp(-a p)-exp(-b(1-p)))/(p exp(-a p)+(1-p) exp(-b (1-p)))=0 , a>0, b>0, 1>=p>=0](https://www.wolframalpha.com/input?i=reduce+p+%281-p%29%28exp%28-a+p%29-exp%28-b%281-p%29%29%29%2F%28p+exp%28-a+p%29%2B%281-p%29+exp%28-b+%281-p%29%29%29%3D0+%2C+a%3E0%2C+b%3E0%2C+1%3E%3Dp%3E%3D0){target="_blank"}
+
+obtendo:
+
+```{r out.width = '50%', echo=FALSE}
+knitr::include_graphics("./image/Wexp_solution.png")
+```
+
+No WolframAlpha, colocamos, explicitamente, <code>exp(-a p)</code> no lugar de $V(A)$ e <code>exp(-b (1-p))</code> no lugar $V(B)$; o valor 'a' representa $d_A$ e 'b' representa $d_B$ (pois grafar 'dA' ou 'dB' no WolframAlpha pode fazer com que a interpretação seja confundida com $d \cdot A$ e $d \cdot B$). 
+
+A resposta analítica encontrou três valores:
+
+* $p=1$
+* $p=0$
+* $p=\dfrac{d_B}{d_A+d_B}=\dfrac{0.8}{0.5+0.8}=0.61538415384... \approx 0.6154$
+
+Portanto, encontramos valores bastante próximos à solução gráfica.
+
+# Análise de ponto de equilíbrio por derivada
+
+Quando a derivada da equação recursiva no ponto de equilíbrio está entre -1 e 1, o equilíbrio é estável.
+
+```{r fig.align="left", out.width = '30%', out.height = '20%', echo=FALSE}
+knitr::include_graphics("image/WolframAlpha.png")
+```
+
+[simplify derivative p exp(-a p)/(p exp(-a p)+(1-p)exp(-b(1-p))) in p](https://www.wolframalpha.com/input?i=simplify+derivative+p+exp%28-a+p%29%2F%28p+exp%28-a+p%29%2B%281-p%29exp%28-b%281-p%29%29%29+in+p){target="_blank"}
+
+fornece a derivada:
+
+<code>(e^(b + (a + b) p) (1 + (a + b) (-1 + p) p))/(e^((a + b) p) (-1 + p) - e^b p)^2</code>
+
+Podemos estudar os três pontos de equilíbrio encontrados no passo anterior.
+
+* $\hat{p} = 1$: adicionando <code> /. p = 1</code> ao final da derivada para computar a derivada pontual:
+
+```{r fig.align="left", out.width = '30%', out.height = '20%', echo=FALSE}
+knitr::include_graphics("image/WolframAlpha.png")
+```
+
+[(e\^(b + (a + b) p) (1 + (a + b) (-1 + p) p))/(e\^((a + b) p) (-1 + p) - e\^b p)\^2 /. p = 1](https://www.wolframalpha.com/input?i=%28e%5E%28b+%2B+%28a+%2B+b%29+p%29+%281+%2B+%28a+%2B+b%29+%28-1+%2B+p%29+p%29%29%2F%28e%5E%28%28a+%2B+b%29+p%29+%28-1+%2B+p%29+-+e%5Eb+p%29%5E2+%2F.+p+%3D+1){target="_blank"}
+
+para a qual, a solução é $e^{a} = e^{d_{A}}=e^{0.5}=1.648721$, valor maior que 1 e, portanto, $\hat{p}=1$ é equilíbrio instável.
+
+* $\hat{p} = 0$: testando com:
+
+```{r fig.align="left", out.width = '30%', out.height = '20%', echo=FALSE}
+knitr::include_graphics("image/WolframAlpha.png")
+```
+
+[(e\^(b + (a + b) p) (1 + (a + b) (-1 + p) p))/(e\^((a + b) p) (-1 + p) - e\^b p)\^2 /. p = 0](https://www.wolframalpha.com/input?i=%28e%5E%28b+%2B+%28a+%2B+b%29+p%29+%281+%2B+%28a+%2B+b%29+%28-1+%2B+p%29+p%29%29%2F%28e%5E%28%28a+%2B+b%29+p%29+%28-1+%2B+p%29+-+e%5Eb+p%29%5E2+%2F.+p+%3D+0){target="_blank"}
+
+para a qual, a solução é $e^{b} = e^{d_{B}}=e^{0.8} = 2.225541$, valor também maior que 1 e, portanto, $\hat{p}=0$ é equilíbrio instável.
+
+* finalmente, para $\hat{p} = {{d_B}\over{d_A+d_B}}$, testamos
+
+```{r fig.align="left", out.width = '30%', out.height = '20%', echo=FALSE}
+knitr::include_graphics("image/WolframAlpha.png")
+```
+
+[e\^(b + (a + b) p) (1 + (a + b) (-1 + p) p))/(e\^((a + b) p) (-1 + p) - e\^b p)\^2 /. p = b/(a+b)](https://www.wolframalpha.com/input?i=e%5E%28b+%2B+%28a+%2B+b%29+p%29+%281+%2B+%28a+%2B+b%29+%28-1+%2B+p%29+p%29%29%2F%28e%5E%28%28a+%2B+b%29+p%29+%28-1+%2B+p%29+-+%28e%5Eb%29+p%29%5E2+%2F.+p+%3D+b%2F%28a%2Bb%29){target="_blank"}
+
+obtendo-se a derivada pontual <code>(a (1 - b) + b)/(a + b)</code> à qual novamente adicionamos os valores desejados:
+
+```{r fig.align="left", out.width = '30%', out.height = '20%', echo=FALSE}
+knitr::include_graphics("image/WolframAlpha.png")
+```
+
+[(a (1 - b) + b)/(a + b) /. a=0.5, b=0.8](https://www.wolframalpha.com/input?i=%28a+%281+-+b%29+%2B+b%29%2F%28a+%2B+b%29+%2F.+a%3D0.5%2C+b%3D0.8){target="_blank"}
+
+para a qual, o Wolfram Alpha computa o valor numérico da derivada no ponto de equilíbrio, que neste caso é 0.692308, valor entre -1 e 1; portanto, $\hat{p} = { {d_B}\over{d_A+d_B} }$ é ponto de equilíbrio estável.
+
+</td></tr></table>
+
+# Modelo por agentes
+
+Este mesmo modelo em versão de simulação por agentes está implementado em [eiras.viabilidadedec2.R](eiras.viabilidadedec2.R){target="_blank"}. Após 1000 repetições da mesma condição, obtivemos:
+
+* em número de indivíduos, mostrando-se as repetições, a média e o intervalo de confiança 95%:
+
+```{r out.width = '70%', echo=FALSE}
+knitr::include_graphics("image/viabilidadedec2_res.xlsx_abs.png")
+```
+
+* em proporção, mostrando-se a média e o intervalo de confiança 95%:
+
+```{r out.width = '70%', echo=FALSE}
+knitr::include_graphics("image/viabilidadedec2_res.xlsx_prc.png")
+```
+
+<hr>
+
+# Modelo por agentes
+
+Este mesmo modelo, por agentes, está implementado em [eiras.viabilidadefncV.R](eiras.viabilidadefncV.R), resultando em:
+
+```{r, echo=FALSE}
+source("eiras.viabilidadeplot.R")
+viabilidadeplot("tables/viabilidadefncV_res.xlsx")
+```
+
+# FIM
+
+```{r out.width = '50%', echo=FALSE}
+knitr::include_graphics("image/equilibrio.png")
+```
+
+# Lista de Questões
+
+## Questão 1
+
+Suponha que a aptidão diminui à medida que aumenta a proporção de indivíduos de um genótipo. 
+
+Uma função de viabilidade, V, neste caso, é dada por:
+
+$$V(V^{\text{max}},p) = {V^{\text{max}} \cdot { {e^{-p}-e^{-1}}\over{1-e^{-1}} }}$$
+Implementada em [VlistaExerc.R](VListaExerc.R){target="_blank"}.
+
+Esta função tem dois parâmetros: 
+
+- o valor máximo de viabilidade, <code>maxfit</code>, que um genótipo pode ter quando $p=0$, sendo matematicamente simbolizado por $V^{\text{max}}$ e
+- a proporção, $p$, de indivíduos de genótipo A. 
+
+Esta fórmula, variando $p$ de 0 a 1, retorna uma exponencial descendente que inicia em $V^{\text{max}}$ quando $p=0$ e termina em $0$ quando $p=1$. No gráfico a seguir, os valores máximos de viabilidade dos genótipos A e B são, respectivamente, $V^{\text{max}}_A=0.8$ e $V^{\text{max}}_B=0.5$. 
+
+Para reproduzir os gráfico use o script [VmaxListaExerc.R](VmaxListaExerc.R){target="_blank"}.
+
+```{r, echo=FALSE, exec=TRUE}
+source("eiras.Vmax.R")
+
+all_ps <- seq(0,1,length.out=100)
+f <- V(maxfit=0.8, p=all_ps)
+plot(all_ps,f,
+     main="Viabilidade para os genótipos A e B\nexponencial negativa",
+     xlab="p", ylab="V",
+     xlim=c(0,1), ylim=c(0,1),
+     lwd=2, type="l")
+f <- V(maxfit=0.5, p=all_ps)
+lines(all_ps,f,
+       lwd=2, lty=2, col="black")
+legend("topright",	
+        c("A","B"),
+        lwd=2,	
+        lty=c(1,2),	
+        col=c("black","black"),
+        bty="n")	
+```
+
+Dado este modelo do replicador genético modificado: 
+
+1. Expressar a fórmula do $\Delta p$;
+1. Identificar os pontos de equilíbrio $\hat{p}$;
+1. Classificar cada ponto de equilíbrio como estável ou instável. 
+
+# 1. Fórmula de $\Delta p$
+
+$$\Delta p = p(1-p) \dfrac{V(V_{A}^{max},p) - V(V_{B}^{max},1-p)}{p V(V_{A}^{max},p) + (1-p) V(V_{B}^{max},1-p)}$$
+
+Lembrando que a função $V(V^{max},p)$ é dada por:
+
+$$V(V^{max},p)=V^{max} \dfrac{e^{-p}-e^{-1}}{1-e^{-1}}$$
+
+Substituindo, temos que:
+
+$$\large\Delta p = p(1-p) \frac{V_{A}^{max}\frac{e^{-p}-e^{-1}}{1-e^{-1}} - V_{B}^{max} \frac{e^{-(1-p)}-e^{-1}}{1-e^{-1}}}{p V_{A}^{max} \frac{e^{-p}-e^{-1}}{1-e^{-1}} + (1-p) V_{B}^{max} \frac{e^{-(1-p)}-e^{-1}}{1-e^{-1}}}$$
+
+# 2. Ponto(s) de equilíbrio por WolframAlpha
+
+Podemos procurar por pontos de equilíbrio por meio da(s) raíz(es) de $\Delta p=0$, i.e.:
+
+```{r fig.align="left", out.width = '30%', out.height = '20%', echo=FALSE}
+knitr::include_graphics("image/WolframAlpha.png")
+```
+
+[p (1-p)(A (exp(-p)-exp(-1))/(1-exp(-1))-B (exp(p-1)-exp(-1))/(1-exp(-1)))/(p A (exp(-p)-exp(-1))/(1-exp(-1))+(1-p) B (exp(p-1)-exp(-1))/(1-exp(-1))), p=1](https://www.wolframalpha.com/input?i=p+%281-p%29%28A+%28exp%28-p%29-exp%28-1%29%29%2F%281-exp%28-1%29%29-B+%28exp%28p-1%29-exp%28-1%29%29%2F%281-exp%28-1%29%29%29%2F%28p+A+%28exp%28-p%29-exp%28-1%29%29%2F%281-exp%28-1%29%29%2B%281-p%29+B+%28exp%28p-1%29-exp%28-1%29%29%2F%281-exp%28-1%29%29%29%2C+p%3D1){target="_blank"}
+
+[(B - B e)/(A + B (-1 + e)), A=.8, B=.5](https://www.wolframalpha.com/input?i=%28B+-+B+e%29%2F%28A+%2B+B+%28-1+%2B+e%29%29%2C+A%3D.8%2C+B%3D.5){target="_blank"}
+
+[p (1-p)(A (exp(-p)-exp(-1))/(1-exp(-1))-B (exp(p-1)-exp(-1))/(1-exp(-1)))/(p A (exp(-p)-exp(-1))/(1-exp(-1))+(1-p) B (exp(p-1)-exp(-1))/(1-exp(-1))), p=0](https://www.wolframalpha.com/input?i=p+%281-p%29%28A+%28exp%28-p%29-exp%28-1%29%29%2F%281-exp%28-1%29%29-B+%28exp%28p-1%29-exp%28-1%29%29%2F%281-exp%28-1%29%29%29%2F%28p+A+%28exp%28-p%29-exp%28-1%29%29%2F%281-exp%28-1%29%29%2B%281-p%29+B+%28exp%28p-1%29-exp%28-1%29%29%2F%281-exp%28-1%29%29%29%2C+p%3D0){target="_blank"}
+
+[(A (-1 + e))/(B + A (-1 + e)), A=.8, B=.5](https://www.wolframalpha.com/input?i=%28A+%28-1+%2B+e%29%29%2F%28B+%2B+A+%28-1+%2B+e%29%29%2C+A%3D.8%2C+B%3D.5){target="_blank"}
+
+[p (1-p)(A (exp(-p)-exp(-1))/(1-exp(-1))-B (exp(p-1)-exp(-1))/(1-exp(-1)))/(p A (exp(-p)-exp(-1))/(1-exp(-1))+(1-p) B (exp(p-1)-exp(-1))/(1-exp(-1)))=0](https://www.wolframalpha.com/input?i=p+%281-p%29%28A+%28exp%28-p%29-exp%28-1%29%29%2F%281-exp%28-1%29%29-B+%28exp%28p-1%29-exp%28-1%29%29%2F%281-exp%28-1%29%29%29%2F%28p+A+%28exp%28-p%29-exp%28-1%29%29%2F%281-exp%28-1%29%29%2B%281-p%29+B+%28exp%28p-1%29-exp%28-1%29%29%2F%281-exp%28-1%29%29%29%3D0){target="_blank"}
+
+O resultado por ![](image/WA.png) é:
+
+`log((-A + B + sqrt(A^2 + B^2 + A B (-2 + 4 e)))/(2 B))`
+
+$$\hat{p} = ln \left( {{{ \sqrt{ { (V^{max}_A})^2 + ({V^{max}_B})^2 + 2 (2e-1){V^{max}_A}{V^{max}_B}} -{V^{max}_A}+{V^{max}_B}  }\over {2{V^{max}_B}} }} \right)$$
+
+Podemos calcular o valor numérico aproximado de $\hat{p}$ assumindo $V^{max}_{A} = 0.8$ e  $V^{max}_{B} = 0.5$:
+
+Portanto,
+
+```{r fig.align="left", out.width = '30%', out.height = '20%', echo=FALSE}
+knitr::include_graphics("image/WolframAlpha.png")
+```
+
+[log((-A+B+sqrt(A\^2+B\^2+A B (-2+4 e)))/(2 B)) /. A=.8, B=.5](https://www.wolframalpha.com/input?i=log%28%28-A%2BB%2Bsqrt%28A%5E2%2BB%5E2%2BA+B+%28-2%2B4+e%29%29%29%2F%282+B%29%29+%2F.+A%3D.8%2C+B%3D.5){target="_blank"}
+
+resulta $\hat{p}\approx 0.591642$.
+
+# 2. Ponto(s) de equilíbrio por R
+
+Primeiramente, implementamos a função $V(V^{max},p)$ em ![](image/R.png) usando:
+
+```{r, eval=FALSE}
+#eiras.Vmax.R
+V <- function(maxfit, p)
+{
+  fitness <- maxfit*(exp(-p)-exp(-1)))/(1-exp(-1)+1e-6
+  return(fitness)
+}
+```
+
+Note que adicionamos `1e-6` ao denominador, pois, do contrário, ocorre divisão por zero se $p=0$ ou $p = 1$, fazendo com que $\Delta p$ fique indefinido.
+
+Em seguida, implementamos o cálculo do $\Delta p$ usando:
+
+``` {r, eval=FALSE}
+# eiras.deltapfncV.R
+
+source("eiras.Vmax.R")
+
+deltapfncV <- function(p, VAmax, VBmax, zA=1, zB=1)
+{
+  WA <- V(VAmax,p)*zA
+  WB <- V(VBmax,1-p)*zB
+  dt <- data.frame(p,WA,WB)
+  dt$w <- dt$p*dt$WA + (1-dt$p)*dt$WB
+  dt$dp <- dt$p*(1-dt$p)*(dt$WA-dt$WB)/dt$w
+  plot(dt$p, dt$dp,
+       xlab="p", ylab="delta p",
+       xlim=c(0,1.05),
+       ylim=c(min(dt$dp,na.rm=TRUE),max(dt$dp,na.rm=TRUE)*1.1),
+       type="l")
+  pmax <- p[which(dt$dp==max(dt$dp,na.rm=TRUE))]
+  abline(v=pmax, lty=2)
+  points(pmax,max(dt$dp,na.rm=TRUE),pch=21,col="black",bg="black")
+  text(pmax,max(dt$dp,na.rm=TRUE)*1.05,paste0("p = ",pmax),cex=0.7,pos=4)
+  return (dt$dp)
+}
+```
+
+Usando estes valores, passo a passo, podemos visualizar o comportamento da dinâmica deste replicador no tempo utilizando a solução disponível em [eiras.demoptfncV.R](eiras.demoptfncV.R){target="_blank"}:
+
+```{r, echo=FALSE}
+source("eiras.demoptfncV.R")
+```
+
+Aparentemente, após uma breve oscilação inicial, torna-se constante ao redor $p_t=0.6$ (consequentemente, a proporção de $B$ é constante ao redor de $0.4$, significando que os dois genótipos coexistem).
+
+Para estudarmos este equilíbrio, verificamos como $\Delta p$ se comporta em função de $p$ implementando [eiras.demodeltapfncV.R](eiras.demodeltapfncV.R){target="_blank"}:
+
+```{r, echo=FALSE}
+source("eiras.demodeltapfncV.R")
+```
+
+Novamente assinalamos com um círculo o valor de $p$ que fornece o máximo $\Delta p$, e com 'x' o possível ponto de equilíbrio, correspondendo a $\Delta p = 0$.
+
+Também podemos detectar pontos de equilíbrio procurando por pontos nos quais a função $p''(p)$ cruza a bissetriz ($p''= p$). Para tanto, implementamos a função recursiva de $p''$ modificada em [eiras.pduaslinhasfncV.R](eiras.pduaslinhasfncV.R){target="_blank"}:
+
+```{r, echo=TRUE}
+source("eiras.pduaslinhasfncV.R")
+VAmax <- 0.8
+VBmax <- 0.5
+pdualinhasfncV(VAmax,VBmax)
+```
+
+# 3. Análise do ponto de equilíbrio por WolframAlpha
+
+Primeiramente, devemos expressar $p''$ em função de $p$:
+
+$$\Large p''= \frac{pV(V_{A}^{max}, \; p)}{pV(V_{A}^{max},\;p) + (1-p)V(V_{B}^{max},\;1-p)}$$
+
+Escrevemos a equação recursiva em WolframAlpha por meio do comando:
+
+```{r fig.align="left", out.width = '30%', out.height = '20%', echo=FALSE}
+knitr::include_graphics("image/WolframAlpha.png")
+```
+
+[p A/(p A + (1-p) B) /. A=a(exp(-p)-exp(-1))/(1-exp(-1)), B=b(exp(-(1-p))-exp(-1))/(1-exp(-1))](https://www.wolframalpha.com/input?i=p+A%2F%28p+A+%2B+%281-p%29+B%29+%2F.+A%3Da%28exp%28-p%29-exp%28-1%29%29%2F%281-exp%28-1%29%29%2C+B%3Db%28exp%28-%281-p%29%29-exp%28-1%29%29%2F%281-exp%28-1%29%29){target="_blank"}
+
+O comando acima devolve uma forma simplificada da equação, expressa por:
+
+```{r fig.align="left", out.width = '30%', out.height = '20%', echo=FALSE}
+knitr::include_graphics("image/WolframAlpha.png")
+```
+
+[(e p a(-1/e + e\^(-p)))/(-b (-1 + e^p) (-1 + p) + e p a(-1/e + e\^(-p)))](https://www.wolframalpha.com/input?i=%28e+p+a%28-1%2Fe+%2B+e%5E%28-p%29%29%29%2F%28-b+%28-1+%2B+e%5Ep%29+%28-1+%2B+p%29+%2B+e+p+a%28-1%2Fe+%2B+e%5E%28-p%29%29%29){target="_blank"}
+
+Então usamos:
+
+```{r fig.align="left", out.width = '30%', out.height = '20%', echo=FALSE}
+knitr::include_graphics("image/WolframAlpha.png")
+```
+
+[derivative (e p a (-1/e + e^(-p)))/(-b (-1 + e^p) (-1 + p) + e p a (-1/e + e^(-p))) in p](https://www.wolframalpha.com/input?i=derivative+%28e+p+a+%28-1%2Fe+%2B+e%5E%28-p%29%29%29%2F%28-b+%28-1+%2B+e%5Ep%29+%28-1+%2B+p%29+%2B+e+p+a+%28-1%2Fe+%2B+e%5E%28-p%29%29%29+in+p){target="_blank"}
+
+Obtendo a derivada:
+
+`-(a b e^p (e^(p + 1) (-2 p^2 + 2 p - 1) + e^(2 p) (p^2 - p + 1) + e (p^2 - p + 1) - e^p))/(a (e^p - e) p + b e^p (e^p - 1) (p - 1))^2`
+
+Em seguida, calculamos a derivada em `/. p = 0.591642`:
+
+```{r fig.align="left", out.width = '30%', out.height = '20%', echo=FALSE}
+knitr::include_graphics("image/WolframAlpha.png")
+```
+
+[-(a b e^p (e^(p + 1) (-2 p^2 + 2 p - 1) + e^(2 p) (p^2 - p + 1) + e (p^2 - p + 1) - e^p))/(a (e^p - e) p + b e^p (e^p - 1) (p - 1))^2 /. p = 0.591642](https://www.wolframalpha.com/input?i=-%28a+b+e%5Ep+%28e%5E%28p+%2B+1%29+%28-2+p%5E2+%2B+2+p+-+1%29+%2B+e%5E%282+p%29+%28p%5E2+-+p+%2B+1%29+%2B+e+%28p%5E2+-+p+%2B+1%29+-+e%5Ep%29%29%2F%28a+%28e%5Ep+-+e%29+p+%2B+b+e%5Ep+%28e%5Ep+-+1%29+%28p+-+1%29%29%5E2+%2F.+p+%3D+0.591642){target="_blank"}
+
+<br>
+Obtendo a derivada pontual:
+
+`-(1.19595 a b)/(a + 1.10434 b)^2`
+
+Então, substituímos os valores de $V_A^{max}$ e $V_B^{max}$:
+
+```{r fig.align="left", out.width = '30%', out.height = '20%', echo=FALSE}
+knitr::include_graphics("image/WolframAlpha.png")
+```
+
+[-(1.19595 a b)/(a + 1.10434 b)^2 /. a=0.8, b=0.5](https://www.wolframalpha.com/input?i=-%281.19595+a+b%29%2F%28a+%2B+1.10434+b%29%5E2+%2F.+a%3D0.8%2C+b%3D0.5){target="_blank"}
+
+Finalmente, a derivada em $\hat{p}\approx0.591642$ é $-0.261644$.
+
+Portanto, $\hat{p} = ln \left( {{{ \sqrt{{(V^{max}_A})^2 + ({V^{max}_B})^2 + 2 (2e-1){V^{max}_A}{V^{max}_B} } -{V^{max}_A}+{V^{max}_B}}\over {2{V^{max}_B}}}} \right)$ para $V^{max}_{A} = 0.8$ e  $V^{max}_{B} = 0.5$ é ponto de equilíbrio **estável**.
+
+# 3. Análise do ponto de equilíbrio por R
+
+Para sabermos se o ponto de equilíbrio encontrado anteriormente é estável, usamos o método gráfico:
+
+```{r out.width='80%', fig.show='hold', echo=TRUE}
+source("eiras.pduaslinhasfncV_eq.R")
+VAmax <- 0.8
+VBmax <- 0.5
+pdualinhasfncV_eq(VAmax,VBmax)
+```
+
+Observe que, coerente com a oscilação inicial sugerida pela dinâmica do replicador no tempo, as linhas do método gráfico espiralam em direção ao ponto de equilíbrio que é, neste caso, estável.
+
+# Referências
+
+* McElreath, R & Boyd, R (2007) _Mathematical models of social evolution_. USA: University of Chicago Press. https://doi.org/10.7208/chicago/9780226558288.001.0001
+* Otto, SP & Day, T (2007) _A biologist’s guide to mathematical modeling in ecology and evolution_. NJ: Princeton University Press.
+* Siqueira, JO (2011) _Fundamentos de métodos quantitativos: Aplicados em Administração, Economia, Contabilidade e Atuária usando WolframAlpha e SCILAB_. SP: Saraiva. 
+
