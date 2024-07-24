@@ -1,0 +1,57 @@
+# Two Defecating salamanders
+#
+#   Implemented by Paulo Silveira & Jani Pereira, 2018
+#
+
+# INSTRUCTIONS
+#   Write equations w1 (right corner = hawk), w2 (top corner) and w3 (left corner = dove)
+#   Remove unnecessary parameters 
+#   Add parameters at the end of the list with default value (using =)
+#   End with ", ...)"
+#   Do not remove w0 from equations 
+#
+#   Edit ps.config to inform the number of corners (2 or 3 kinds of players)
+#   Give the names for the corners in order: left, right and top corner names
+#
+#   Save this definition with no extension or extension ".txt"
+#
+#   Call with:
+#   > mygame("Gamename", parameters, options)
+
+
+# B/2 > c to be a prisioner's dilemma
+ps.game <- function (p, q, r, v=2, c=3, w0 = 5, B=5, c2 = 2, ...) 
+{
+  # right: non defecating 
+  w1 <- w0 + p*(B-c2) + r*(B/2-c2)
+  # top: empty (reserved to another kind)
+  w2 <- w0 + 0
+  # left: defecating
+  w3 <- w0 + p*(B/2) + r*(0)
+
+  c(w1, w2, w3)
+}
+
+ps.config <- function ()
+{
+  # numcorners, labels: left right top
+  c(2,"Defecat(D)","NonDefecat(C)","")
+}
+
+# add your comments (optional)
+ps.comment <- function ()
+{
+  cat
+  ("
+      Two defecating salamanders
+
+             (p)                    (1-p)            
+             ALLC                   ALLD        
+   ALLC      V(ALLC|ALLC) = B-c2    V(ALLC|ALLD) = B/2-c2    
+   ALLD      V(ALLD|ALLC) = B/2     V(ALLD|ALLD) = 0    
+   
+      Default condition:
+        B = 5 
+        c2 = 2 
+  ");  
+}

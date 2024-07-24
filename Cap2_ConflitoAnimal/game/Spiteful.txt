@@ -1,0 +1,44 @@
+# Spite
+#
+#   Implemented by Paulo Silveira, 2018
+#
+# Assumindo b<0 e c<0
+#
+#		(p)		(r)
+#		C		D
+#	C	R = b - c	S = -c
+#	D	T = b 		P = 0
+
+# INSTRUCTIONS
+#   Write equations w1 (right corner = hawk), w2 (top corner) and w3 (left corner = dove)
+#   Remove unnecessary parameters 
+#   Add parameters at the end of the list with default value (using =)
+#   End with ", ...)"
+#   Do not remove w0 from equations 
+#
+#   Edit ps.config to inform the number of corners (2 or 3 kinds of players)
+#   Give the names for the corners in order: left, right and top corner names
+#
+#   Save this definition with no extension or extension ".txt"
+#
+#   Call with:
+#   > mygame("Gamename", parameters, options)
+
+ps.game <- function (p, q, r, v = 2, c = -1, w0 = 5, b = -1, ...) 
+{
+
+  # Spite: C (left)
+  w1 <- w0 + p*(b-c) + r*(-c)
+  # empty (reserved to another kind)
+  w2 <- w0 + 0
+  # Other: D (right)
+  w3 <- w0 + p*b + r*0
+
+  c(w1, w2, w3)
+}
+
+ps.config <- function ()
+{
+  # numcorners, labels: left right top
+  c(2,"Spite (C)","Other (D)","")
+}

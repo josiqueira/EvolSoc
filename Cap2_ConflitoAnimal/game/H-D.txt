@@ -1,0 +1,71 @@
+# Hawk & dove
+#   individuals dispute resources (v)
+# Hawk against hawk ... from a fight, one wins v and the other loses c
+# Dove finds dove ... they share the resouce
+# Hawk against dove ... hawk gets v without cost (c); dove gets nothing
+#
+#
+#     (p)       (r)
+#     H         D
+# H   (v-c)/2   v
+# D   0         v/2
+#
+
+
+# INSTRUCTIONS
+#   Write equations w1 (right corner = hawk), w2 (top corner) and w3 (left corner = dove)
+#   Remove unnecessary parameters 
+#
+#   Check function ps.game(): add parameters at the end of the list with default values (using =)
+#   End with ", ...)"
+#   Do not remove w0 from equations 
+#
+#   Edit ps.config() to inform the number of corners (2 or 3 kinds of players)
+#   Give the names for the corners in order: left, right and top corner names
+#
+#   Edit ps.comment() if you intend to give additional information to users
+#
+#   Save this definition with no extension or extension ".txt"
+#
+#   Call with:
+#   > mygame("Gamename", parameters, options)
+
+ps.game <- function (p, q, r, w0=5, v=2, c=3, rW=0, ...) 
+{
+  # right
+  w1 <- w0 + (rW+(1-rW)*p)*(v-c)/2 + ((rW*0)+(1-rW)*r)*v
+  # top: empty when numcorners = 2
+  w2 <- w0 + 0
+  # left
+  w3 <- w0 + (rW*0+(1-rW)*p)*0 + (rW+(1-rW)*r)*v/2
+  
+  c(w1, w2, w3)
+}
+
+ps.config <- function ()
+{
+  # numcorners, labels: left right top
+  c(2,"Dove","Hawk","")
+}
+
+# add your comments (optional)
+ps.comment <- function ()
+{
+  cat
+  ("
+      Hawk & Dove
+     (p)       (r)
+      H         D
+  H   (v-c)/2   v
+  D   0         v/2 
+
+v=2, c=3, d=0  
+
+      Hawk & Dove
+     (p)       (r)
+      H         D
+  H   -1/2      2
+  D   0         1  
+  ");
+}
+

@@ -1,0 +1,43 @@
+# Motivated
+#   Ants are inactive by default
+#   Trashers are always carrying trash
+#   Motivated may carry trash only when contact a trasher
+#   B is benefit (global) when trash is put aways
+#   c2 is the cost for carrying trash
+#   d2 is damage for having trash around
+#
+#   Implemented by Paulo Silveira & Jani Pereira, 2018
+#
+
+# INSTRUCTIONS
+#   Write equations w1 (right corner), w2 (top corner) and w3 (left corner)
+#   Remove unnecessary parameters 
+#   Add parameters at the end of the list with default value (using =)
+#   End with ", ...)"
+#   Do not remove w0 from equations 
+#
+#   Edit ps.config to inform the number of corners (2 or 3 kinds of players)
+#   Give the names for the corners in order: left, right and top corner names
+#
+#   Save this definition with no extension or extension (e.g., "Gamename.txt"
+#
+#   Call with:
+#   > mygame("Gamename", parameters, options)
+
+ps.game <- function (p, q, r, v = 2, w0 = 5, B=5, c2=1, d2=2, ...) 
+{
+  # trasher
+  w1 <- w0 + p*(B-c2)  + q*(B-c2) + r*(B/2-c2-d2/2)
+  # motivated
+  w2 <- w0 + p*((v-c2)/2) + q*(-d2) + r*(-d2)
+  # inactive
+  w3 <- w0 + p*(B) + q*(B) + r*(-d2)
+  
+  c(w1, w2, w3)
+}
+
+ps.config <- function ()
+{
+  # numcorners, labels: left right top
+  c(3,"Inactive","Trashers","Motivated")
+}

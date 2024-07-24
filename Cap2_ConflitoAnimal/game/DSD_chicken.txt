@@ -1,0 +1,89 @@
+# Diadic games
+#
+#   Implemented by Paulo Silveira, 2018
+#
+#
+#		(p)		    (r)
+#		C		      D
+#	C	c.r2 - c	c.r2 - c
+#	D	c.r1 	  	0
+#
+#	r1 > 0, r2 > 0, c > 0
+#
+# Possible games:
+# - chicken (default): 
+# r2 - r1 < 1 ===> r2 < r1+1
+# r1 > 1
+#
+# Other possible games:
+# - coordenation: 
+#	r2 - r1 > 1 ===> r2 > r1+1
+#	r1 < 1
+# - prisioner's dilema: 
+# r2 - r1 < 1 ===> r2 < r1+1
+# r1 < 1
+# - mutual cooperation: 
+# r2 - r1 > 1 ===> r2 > r1+1
+# r1 > 1
+
+
+# INSTRUCTIONS
+#   Write equations w1 (right corner = hawk), w2 (top corner) and w3 (left corner = dove)
+#   Remove unnecessary parameters 
+#
+#   Check function ps.game(): add parameters at the end of the list with default values (using =)
+#   End with ", ...)"
+#   Do not remove w0 from equations 
+#
+#   Edit ps.config() to inform the number of corners (2 or 3 kinds of players)
+#   Give the names for the corners in order: left, right and top corner names
+#
+#   Edit ps.comment() if you intend to give additional information to users
+#
+#   Save this definition with no extension or extension ".txt"
+#
+#   Call with:
+#   > mygame("Gamename", parameters, options)
+
+ps.game <- function (p, q, r, w0 = 5, c = 1, r1 = 2, r2 = 2, ...) 
+{
+  # p, right corner - D
+  w1 <- w0 + p*(c*r1)
+  # q, top corner - empty
+  w2 <- w0 + 0
+  # r, left corner - C
+  w3 <- w0 + p*(c*r2-c) + r*(c*r1-c)
+  
+  c(w1, w2, w3)
+}
+
+ps.config <- function ()
+{
+  # numcorners, labels: left right top
+  c(2,"Chicken (C)","Other (D)","")
+}
+
+# add your comments (optional)
+ps.comment <- function ()
+{
+  cat
+  ("
+    Possible games:
+    - coordenation: 
+         r2 - r1 > 1 ===> r2 > r1+1
+         r1 < 1
+    - chicken: 
+        r2 - r1 < 1 ===> r2 < r1+1
+        r1 > 1
+    - prisioner's dilema: 
+        r2 - r1 < 1 ===> r2 < r1+1
+        r1 < 1
+    - mutual cooperation: 
+        r2 - r1 > 1 ===> r2 > r1+1
+        r1 > 1
+        
+    Default: r1=2, r2=2 (chicken)    
+  ");
+}
+
+

@@ -1,0 +1,61 @@
+# TF2T
+#   #
+#   Implemented by Jani Pereira & Paulo Silveira, 2018
+#               (p)                   (q)             (r)
+#              TF2T                   AllD            TFT
+#   TF2T    (b-c)/(1-wt)             -c(1+wt)      (b-c)/(1-wt) 
+#   TFT     (b-c)/(1-wt)             -c	         (b-c)/(1-wt)       
+#   AllD      b(1+wt)                 0             b
+
+# INSTRUCTIONS
+#   Write equations w1 (right corner = TF2T), w2 (top corner = TFT) and w3 (left corner = ALLD)
+#   Remove unnecessary parameters 
+#
+#   Check function ps.game(): add parameters at the end of the list with default values (using =)
+#   End with ", ...)"
+#   Do not remove w0 from equations 
+#
+#   Edit ps.config() to inform the number of corners (2 or 3 kinds of players)
+#   Give the names for the corners in order: left, right and top corner names
+#
+#   Edit ps.comment() if you intend to give additional information to users
+#
+#   Save this definition with no extension or extension ".txt"
+#
+#   Call with:
+#   > mygame("Gamename", parameters, options)
+
+# add your comments (optional)
+ps.comment <- function ()
+{
+  cat
+  ("
+      TF2T
+  ");  
+}
+
+#               (p)                   (q)             (r)
+#              TF2T                   AllD            TFT
+#   TF2T    (b-c)/(1-wt)             -c(1+wt)      (b-c)/(1-wt) 
+#   TFT     (b-c)/(1-wt)             -c	         (b-c)/(1-wt)       
+#   AllD      b(1+wt)                 0             b
+ps.game <- function (p, q, r, w0 = 5, wt = 0.5, b = 4, c = 1, ...) 
+{
+  # agora tem uma letra a mais. Antes v e c; agora w, b e c
+  
+  # TF2T
+  w1 <- p*(b-c)/(1-wt) + q*(-c)*(1+wt) + r*(b-c)/(1-wt) + w0
+  # TFT
+  w2 <- p*(b-c)/(1-wt) + q*(-c) + r*(b-c)/(1-wt) + w0
+  # ALLD
+  w3 <- p*b*(1+wt) + q*0 + r*b + w0
+  
+  c(w1, w2, w3)
+}
+
+ps.config <- function ()
+{
+  # numcorners, labels: left, right, top, others
+  c(3,"ALLD","TF2T"," TFT")
+}
+

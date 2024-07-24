@@ -1,0 +1,56 @@
+# Prisoner's dilemma
+#
+#   Implemented by Paulo Silveira, 2018
+#
+
+# INSTRUCTIONS
+#   Write equations w1 (right corner = hawk), w2 (top corner) and w3 (left corner = dove)
+#   Remove unnecessary parameters 
+#   Add parameters at the end of the list with default value (using =)
+#   End with ", ...)"
+#   Do not remove w0 from equations 
+#
+#   Edit ps.config to inform the number of corners (2 or 3 kinds of players)
+#   Give the names for the corners in order: left, right and top corner names
+#
+#   Save this definition with no extension or extension ".txt"
+#
+#   Call with:
+#   > mygame("Gamename", parameters, options)
+
+ps.game <- function (p, q, r, w0 = 5, b = 3, c = 2, rH = 0.5, ...) 
+{
+  # cooperator - AllC
+  w1 = w0 + p*(1+rH)*(b-c) + r*(rH*b-c)
+  # empty
+  w2 = w0
+  # defector - AllD
+  w3 = w0 + p*(b-rH*c) + r*(0)
+  
+  c(w1, w2, w3)
+}
+
+ps.config <- function ()
+{
+  # numcorners, labels: left right top
+  c(2,"AllD","AllC","")
+}
+
+# add your comments (optional)
+ps.comment <- function ()
+{
+  cat
+  ("
+      ALLC-ALLD: kin
+
+             (p)                        (1-p)            
+             ALLC                       ALLD        
+   ALLC      V(ALLC|ALLC) = (1+r)*(b-c) V(ALLC|ALLD) = r*b-c    
+   ALLD      V(ALLD|ALLC) = b-r*c       V(ALLD|ALLD) = 0    
+   
+      Default condition:
+        b = 3 
+        c = 2
+        r = 0.5
+  ");  
+}

@@ -1,0 +1,56 @@
+# Banana
+#
+#   Implemented by Paulo Silveira & Jose Siqueira, 2018
+# INSTRUCTIONS
+#   Write equations w1 (right corner = hawk), w2 (top corner) and w3 (left corner = dove)
+#   Remove unnecessary parameters 
+#
+#   Check function ps.game(): add parameters at the end of the list with default values (using =)
+#   End with ", ...)"
+#   Do not remove w0 from equations 
+#
+#   Edit ps.config() to inform the number of corners (2 or 3 kinds of players)
+#   Give the names for the corners in order: left, right and top corner names
+#
+#   Edit ps.comment() if you intend to give additional information to users
+#
+#   Save this definition with no extension or extension ".txt"
+#
+#   Call with:
+#   > mygame("Gamename", parameters, options)
+
+#               (p)                   (q)            (r)
+#               H                     Ban             D
+#   H         V(H|H) = (v-c)/2      V(H|B)          V(H|D) = v
+#   A         V(Ban|H)              V(Ban|Ban)      V(Ban|D)
+#   D         V(D|H) = 0            V(D|Ban)        V(D|D) = v/2
+
+ps.game <- function (p, q, r, w0 = 5, v = 2, c = 3, xp = 0.45, ...) 
+{
+  # hawk
+  w1 <- w0 + p*(v-c)/2 + q*(1/2)*v + (1/2)*((1-xp)*v-xp*c) + r*v
+  # assessor
+  w2 <- w0 + p*(1/2)*(xp*v - (1-xp)*c) + q*(1/2)*v + r*((1/2)*v + (1/2)*v/2)
+  # dove
+  w3 <- w0 + p*0 + q*(1/2)*v/2 + r*v/2
+  
+  c(w1, w2, w3)
+}
+
+ps.config <- function ()
+{
+  # numcorners, labels: left, right, top, others
+  c(3,"Dove","Hawk","Banana")
+}
+
+# add your comments (optional)
+ps.comment <- function ()
+{
+  cat
+  ("
+      Hawk, Dove, Banana
+
+      default: v=2, c=3, xp = 0.45
+  ");
+}
+

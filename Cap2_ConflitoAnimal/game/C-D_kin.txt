@@ -1,0 +1,41 @@
+# Prisoner's dilemma
+#
+#   Implemented by Paulo Silveira, 2018
+#
+
+ps.game <- function (p, q, r, w0 = 5, b = 3, c = 2, rH = 0.5, ...) 
+{
+  # cooperator - C
+  w1 = w0 + p*(1+rH)*(b-c) + r*(rH*b-c)
+  # empty
+  w2 = w0
+  # defector - D
+  w3 = w0 + p*(b-rH*c) + r*(0)
+  
+  c(w1, w2, w3)
+}
+
+ps.config <- function ()
+{
+  # numcorners, labels: left right top
+  c(2,"D","C","")
+}
+
+# add your comments (optional)
+ps.comment <- function ()
+{
+  cat
+  ("
+      C-D: kin
+
+            (p)                    (1-p)            
+             C                       D        
+   C      V(C|C) = (1+r)*(b-c) V(C|D) = r*b-c    
+   D      V(D|C) = b-r*c       V(D|D) = 0    
+   
+      Default condition:
+        b = 3 
+        c = 2
+        r = 0.7
+  ");  
+}

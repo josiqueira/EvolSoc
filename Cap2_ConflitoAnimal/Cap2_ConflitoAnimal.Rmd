@@ -1,0 +1,1632 @@
+---
+title: "PSE5990: Evolução [do Comportamento] Social I: uma abordagem quantitativa"
+author: |
+  | José O Siqueira (siqueira@usp.br)
+  | Paulo SP Silveira (silveira@usp.br)
+  | João L Bernardy (bernardy@usp.br)
+subtitle: "Capítulo 2: Conflito Animal"
+date: "`r format(Sys.time(), format='%d %B %Y %H:%Mh')`"
+output:
+  html_document:
+    font_adjustment: 1
+    css: style.css
+    df_print: tibble
+    footer: "Cap2_ConflitoAnimal.Rmd"
+    highlight: pygments
+    theme: cerulean
+    number_sections: no
+    toc: yes
+    toc_depth: 4
+    toc_float:
+      collapsed: yes
+      smooth_scroll: no
+  slidy_presentation:
+    font_adjustment: -1
+    css: style.css
+    footer: "Cap2_ConflitoAnimal.Rmd"
+    highlight: pygments
+    theme: cerulean
+    df_print: tibble
+    number_sections: no
+    toc: yes
+    toc_depth: 4
+    toc_float:
+      collapsed: yes
+      smooth_scroll: no
+  pdf_document:
+    toc: yes
+    toc_depth: '4'
+---
+
+```{r set-options, echo=FALSE, cache=FALSE}
+options(width = 80)
+```
+
+```{css, echo=FALSE}
+.code {
+  font-size: 18px;
+  background-color: white;
+  border: 2px solid darkgray;
+  font-weight: bold;
+  max-width: none !important;
+}
+.output {
+  font-size: 18px;
+  background-color: white;
+  border: 2px solid black;
+  font-weight: bold;
+  max-width: none !important;
+}
+.main-container {
+  max-width: none !important;
+}
+.pre {
+  max-height: 500px !important;
+  overflow-y: auto !important;
+  overflow-x: scroll !important;
+}
+.bgobs {
+  background-color: #a0d8d8;
+}
+.bgcodigo {
+  background-color: #eeeeee;
+}
+.bgsaida {
+  background-color: #ecf7db;
+}
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(eval=TRUE,
+                      echo=TRUE, 
+                      fig.width=7, 
+                      fig.height=6,
+                      fig.align="center",
+                      comment=NA,
+                      class.source="code",
+                      class.output="output")
+```
+
+
+```{r}
+invisible(Sys.setlocale("LC_CTYPE", "pt_BR.UTF-8"))
+invisible(Sys.setlocale("LC_ALL", "pt_BR.UTF-8"))
+```
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, error=FALSE}
+options(warn=-1, width=500)
+suppressMessages(library(knitr, warn.conflicts=FALSE))
+suppressMessages(library(readxl, warn.conflicts=FALSE))
+suppressMessages(library(baryplot, warn.conflicts=FALSE))
+suppressMessages(library(plotly, warn.conflicts=FALSE))
+```
+
+# Material
+
+* HTML de R Markdown em [`RPubs`](http://rpubs.com/josiqueira/){target="_blank"}
+* Arquivos em [`GitHub`](https://github.com/josiqueira/EvolSoc){target="_blank"}
+
+# Pacote `baryplot` do R por Richard McElreath
+
+* [Link para baryplot R package](https://xcelab.net/rm/baryplot-r-package/)
+
+# Instalação do pacote `baryplot`
+
+1. Abrir um terminal R
+1. Instalar o pacote `baryplot` usando os comandos: 
+
+`options(repos=c(getOption("repos"), baryplot="http://xcelab.net/R"))`
+
+`install.packages("baryplot", type="source")`
+
+# Instalação do script `mygame.R`
+
+O script `mygame.R` permite executar jogos com duas ou três estratégias. Os jogos são configurados em arquivo-texto (.txt) preparadas para este script.
+
+Para gerar o gráfico do jogo H-D, os passos são os seguintes:
+
+1. Baixar no seu computador os arquivos em [Distribuicao_Cap2_ConflitoAnimal](https://drive.google.com/drive/folders/1tsz1IW7aebPl2AxTd2zDunl-5d7tX2wf?usp=sharing);
+2. Executar o arquivo `Distribuicao_Cap2_ConflitoAnimal.Rproj`;
+3. No RStudio, carregar com `Source` o script `mygame.R`;
+
+# Executando `mygame.R`
+
+1. Na console do RStudio, carregar o script `mygame.R` usando o comando: 
+
+`source("mygame.R")`
+
+3. Executar `mygame.R` com: 
+
+`mygame ("Nome_do_jogo", parametros, options="lista_de_opcoes")`
+
+```{r eval=TRUE, echo=TRUE, results="hide"}
+source("mygame.R")
+mygame("game/H-D.txt")
+```
+
+Caso tenha dúvidas, o comando `mygame()` exibe a sintaxe. 
+
+```{r eval=TRUE, echo=TRUE}
+mygame()
+```
+
+# Parâmetros 
+
+Você pode fornecer os parâmetros pré-definidos ou omiti-los. 
+
+Parâmetros adicionais criados para um novo jogo precisam ser explicitamente declarados. 
+
+## Parâmetros pré-definidos
+
+* `lines`: número de linhas/ trajetórias (default = 100)
+* `v`: valor do recurso (default = 2)
+* `c`: custo da luta (default = 3)
+* `w0`: aptidão basal (default = 5)
+* `d`: custo para _display_  (default = 0)
+
+# Lista de opções 
+
+Estas opções alteram o layout e as regiões a serem exploradas no diagrama: 
+
+* **Cor**: use `color` (black, gray...) para mudar a cor (default = black)
+
+* **Setas**: use `arrows` ou `no_arrows` (default = arrows)
+* **Tamanho da seta**: mude com `arrow_size = #` (default = 1)
+* **Marcadores**: use um dos marcadores pré-definidos: 
+  + `dots`: é o default; marcador de início vazado e de fim sólido em cada linha.
+  + `start_dots`: apenas o marcador de início em cada linha.
+  + `end_dots`: apenas o marcador de fim em cada linha.
+  + `no_dots`: sem marcadores.
+* **Áreas a serem exploradas**: 
+  + `all_areas`: é o default; explora todas as áreas abaixo.
+  + `corners`: início das linhas sobre os vértices.
+  + `edges`: início das linhas sobre as arestas e próximo aos vértices.
+  + `borders`: início das linhas na área interna próxima às arestas.
+  + `inner_area`: início das linhas na área interna e longe das arestas.
+* **Apresentação**: define o tipo de gráfico:
+  * `ternary`: gráfico plano (default)
+  * `tridimensional`: gráfico 3D.
+
+# Jogo Hawk-Dove
+
+```{r eval=TRUE, echo=FALSE, out.width = "60%",  fig.align='center'}
+knitr::include_graphics("image/H-D.png")
+```
+
+```{r eval=TRUE, echo=TRUE, class.output="bgcodigo"}
+cat(readLines("game/H-D.txt"), sep="\n")
+```   
+
+```{r eval=TRUE, echo=TRUE, results="hide"}
+mygame("game/H-D.txt", options=c("arrow_size=2","edges"))
+```
+
+Se $W(H) = W(D)$, então, em ![](image/WA.png):
+
+[Reduce[{w_0+p(v-c)/2+(1-p)v=w_0+(1-p)(v/2),0<=p<=1,c>0,v>0},p]](https://www.wolframalpha.com/input?i=Reduce%5B%7Bw_0%2Bp%28v-c%29%2F2%2B%281-p%29v%3Dw_0%2B%281-p%29%28v%2F2%29%2C0%3C%3Dp%3C%3D1%2Cc%3E0%2Cv%3E0%7D%2Cp%5D){target="_blank"}
+
+Se $v < c$, $c>0$ e $v>0$, tem-se:
+
+$$\hat{p}=\dfrac{v}{c}$$
+
+```{r eval=TRUE, echo=TRUE, results="hide"}
+mygame("game/H-D.txt", v=3, c=2, options=c("arrow_size=2","edges"))
+```
+
+# Gráfico ternário 
+
+[Wikipedia: Ternary plot](https://en.wikipedia.org/wiki/Ternary_plot){target="_blank"}
+
+"A ternary plot, ternary graph, triangle plot, simplex plot, Gibbs triangle or de Finetti diagram is a barycentric plot on three variables which sum to a constant. It graphically depicts the ratios of the three variables as positions in an equilateral triangle. It is used in physical chemistry, petrology, mineralogy, metallurgy, and other physical sciences to show the compositions of systems composed of three species. In population genetics, it is often called a de Finetti diagram. In game theory, it is often called a simplex plot. Ternary plots are tools for analyzing compositional data in the three-dimensional case."
+
+```{r eval=TRUE, echo=FALSE, out.width = "90%",  fig.align='center'}
+knitr::include_graphics("image/H-D-R_tern.png")
+```
+
+# Jogo Hawk-Dove-Retaliator
+
+**Retaliator**: adota estratégia Dove se o oponente adota Dove ou Retaliator; adota Hawk se o outro adota Hawk.
+
+## H-D-R por `baryplot`
+
+```{r eval=TRUE, echo=FALSE, out.width = "90%",  fig.align='center'}
+knitr::include_graphics("image/H-D-R_Table.png")
+```
+
+```{r eval=TRUE, echo=FALSE, out.width = "90%",  fig.align='center'}
+knitr::include_graphics("image/H-D-R_tern_equil.png")
+```
+
+```{r eval=TRUE, echo=TRUE, out.width = "80%",  fig.align='center'}
+baryplot::bary.init() # Plota o triangulo equilátero
+baryplot::bary.labels("Hawk","Retaliator","Dove") # Rotula os vertices
+# Comando que plota a trajetória do ponto com 1/3 de cada estratégia
+baryplot::bary.plotsim(1/3, 1/3, thegame=bary.game.hdr, arrow=TRUE)
+```
+
+```{r eval=TRUE, echo=TRUE}
+# A execução desse comando exibe o conteúdo de sua funcao
+baryplot::bary.game.hdr
+```
+
+```{r eval=FALSE, echo=TRUE}
+baryplot::bary.init() # Plota o triangulo equilátero
+baryplot::bary.labels("Hawk","Retaliator","Dove") # Rotula os vertices
+# A execução desse comando exibe o conteúdo de sua funcao
+baryplot::bary.plotsim(0, 0, thegame=bary.game.hdr, arrow=TRUE)
+baryplot::bary.plotsim(1, 0, thegame=bary.game.hdr, arrow=TRUE)
+baryplot::bary.plotsim(0, 1, thegame=bary.game.hdr, arrow=TRUE)
+baryplot::bary.plotsim(2/3, 0, thegame=bary.game.hdr, arrow=TRUE)
+baryplot::bary.plotsim(0, 2/5, thegame=bary.game.hdr, arrow=TRUE)
+baryplot::bary.plotsim(1/100, 0, thegame=bary.game.hdr, arrow=TRUE)
+baryplot::bary.plotsim(99/100, 0, thegame=bary.game.hdr, arrow=TRUE)
+baryplot::bary.plotsim(1/3, 1/3, thegame=bary.game.hdr, arrow=TRUE)
+baryplot::bary.plotsim(8/10, 1/10, thegame=bary.game.hdr, arrow=TRUE)
+baryplot::bary.plotsim(1/10, 1/10, thegame=bary.game.hdr, arrow=TRUE)
+baryplot::bary.plotsim(3/10, 5/10, thegame=bary.game.hdr, arrow=TRUE)
+baryplot::bary.plotsim(4.5/10, 4.5/10, thegame=bary.game.hdr, arrow=TRUE)
+baryplot::bary.plotsim(0, 0.3, thegame=bary.game.hdr, arrow=TRUE)
+baryplot::bary.plotsim(0, 0.7, thegame=bary.game.hdr, arrow=TRUE)
+baryplot::bary.plotsim(99/100, 1/100, thegame=bary.game.hdr, arrow=TRUE)
+```
+
+```{r eval=TRUE, echo=FALSE}
+baryplot::bary.init() # Plota o triangulo equilátero
+baryplot::bary.labels("Hawk","Retaliator","Dove") # Rotula os vertices
+# A execução desse comando exibe o conteúdo de sua funcao
+baryplot::bary.plotsim(0, 0, thegame=bary.game.hdr, arrow=TRUE)
+baryplot::bary.plotsim(1, 0, thegame=bary.game.hdr, arrow=TRUE)
+baryplot::bary.plotsim(0, 1, thegame=bary.game.hdr, arrow=TRUE)
+baryplot::bary.plotsim(2/3, 0, thegame=bary.game.hdr, arrow=TRUE)
+baryplot::bary.plotsim(0, 2/5, thegame=bary.game.hdr, arrow=TRUE)
+baryplot::bary.plotsim(1/100, 0, thegame=bary.game.hdr, arrow=TRUE)
+baryplot::bary.plotsim(99/100, 0, thegame=bary.game.hdr, arrow=TRUE)
+baryplot::bary.plotsim(1/3, 1/3, thegame=bary.game.hdr, arrow=TRUE)
+baryplot::bary.plotsim(8/10, 1/10, thegame=bary.game.hdr, arrow=TRUE)
+baryplot::bary.plotsim(1/10, 1/10, thegame=bary.game.hdr, arrow=TRUE)
+baryplot::bary.plotsim(3/10, 5/10, thegame=bary.game.hdr, arrow=TRUE)
+baryplot::bary.plotsim(4.5/10, 4.5/10, thegame=bary.game.hdr, arrow=TRUE)
+baryplot::bary.plotsim(0, 0.3, thegame=bary.game.hdr, arrow=TRUE)
+baryplot::bary.plotsim(0, 0.7, thegame=bary.game.hdr, arrow=TRUE)
+baryplot::bary.plotsim(99/100, 1/100, thegame=bary.game.hdr, arrow=TRUE)
+```
+
+# H-D-R por `mygame.R`
+
+```{r eval=TRUE, echo=TRUE, class.output="bgcodigo"}
+cat(readLines("game/H-D-R.txt"), sep="\n")
+```
+
+## Exploração dos vértices
+
+```{r eval=TRUE, echo=TRUE, results="hide"}
+mygame("game/H-D-R.txt", lines=50, options=c("corners"))
+```
+
+## Exploração das arestas (excluindo os vértices)
+
+```{r eval=TRUE, echo=TRUE, results="hide"}
+mygame("game/H-D-R.txt", lines=50, options=c("edges"))
+```
+
+## Exploração próximo dos cantos e arestas 
+
+```{r eval=TRUE, echo=TRUE, results="hide"}
+mygame("game/H-D-R.txt", lines=50, options=c("borders"))
+```
+
+## Exploração do interior do gráfico ternário 
+
+```{r eval=TRUE, echo=TRUE, results="hide"}
+mygame("game/H-D-R.txt", lines=50, options=c("inner_area"))
+```
+
+# Análise de equilíbrio na aresta Dove-Retaliator
+
+Aptidão de H: 
+
+$$W(H)=w_{0} + (p+q) \;\dfrac{v-c}{2} + (1-p-q) v = \\
+=w_{0} + v-\dfrac{(p+q)(v+c)}{2}$$
+
+Aptidão de D: 
+
+$$W(D)=w_{0} + p \;0 + q \dfrac{v}{2} + (1-p-q) \dfrac{v}{2}=\\
+=w_{0} + (1-p) \dfrac{v}{2}$$
+
+Aptidão de R: 
+
+$$W(R)=w_{0} + p \dfrac{v-c}{2} + q \dfrac{v}{2} + (1-p-q) \dfrac{v}{2}\\
+=w_{0} + p \dfrac{v-c}{2} + (1-p) \dfrac{v}{2}=\\
+=\dfrac{v-pc}{2}$$
+
+Note que quando $p=0$, i.e., a população é exclusivamente composta por Dove e Retaliator, as aptidões das duas estratégias são iguais.
+
+Aptidões de D e R na ausência de H:
+
+$$W(D)=W(R)=w_{0} + q \dfrac{v}{2} + (1-q) \dfrac{v}{2}=\\
+=w_{0} + \dfrac{v}{2}$$
+
+Aptidão de H mutante raro:
+
+$$W(H \; \text{raro})=w_{0} + v-\dfrac{(p+q)(v+c)}{2}=\\
+=w_{0} + v-q\dfrac{v+c}{2}$$
+
+$W(D)=W(H \; \text{raro})$ se: 
+
+$$w_{0} + \dfrac{v}{2}= w_{0} + v-q\dfrac{v+c}{2}$$
+
+Solucionando em ![](image/WA.png):
+
+[Solve for q: v/2 = v - q (v+c)/2, v>0, c>0](https://www.wolframalpha.com/input?i=Solve+for+q%3A+v%2F2+%3D+v+-+q+%28v%2Bc%29%2F2%2C+v%3E0%2C+c%3E0){target="_blank"}
+
+Tem-se: 
+
+$$\hat{q}=\dfrac{v}{v+c}$$
+
+# Teoria dos jogos
+
+Origem: _The Theory of Games and Economic Behavior_ de John von Neumann e Oskar Morgenstern em 1944.
+
+Grandes avanços com [John Nash](https://en.wikipedia.org/wiki/John_Forbes_Nash_Jr.){target="_blank"}, [Reinhard Selten](https://en.wikipedia.org/wiki/Reinhard_Selten){target="_blank"} e [John Harsanyi](https://en.wikipedia.org/wiki/John_Harsanyi){target="_blank"}. Os três dividiram o prêmio Nobel de Economia em 1994.
+
+```{r fig.align="left", echo=FALSE}
+knitr::include_graphics("image/coruja.png", dpi=150)
+```
+
+<table style="border:1; background-color:#CAE0AB"><tr><td>
+
+<table style="font-size:70%;"><tr>
+<td style="width:30%;">
+
+```{r out.width='100%', fig.align="left", echo=FALSE}
+knitr::include_graphics("image/JvNeumann.png")
+```
+
+<div align=right><small><small>
+https://albert.ias.edu/handle/20.500.12111/4810
+</small></small></div>
+</td>
+<td style="text-align: left;">
+
+John von Neumann, nascido Margittai Neumann János Lajos (Budapeste, 28 de dezembro de 1903 — Washington, D.C., 8 de fevereiro de 1957) foi um matemático húngaro de origem judaica, naturalizado estadunidense.
+
+Contribuiu na teoria dos conjuntos, análise funcional, teoria ergódica, mecânica quântica, ciência da computação, economia, teoria dos jogos, análise numérica, hidrodinâmica das explosões, estatística e muitas outras áreas da matemática. 
+
+Trabalhou em desenvolvimentos chave da Física Nuclear, relacionados com reações termonucleares e com a bomba de hidrogênio. Participou também do Projeto Manhattan, responsável pelo desenvolvimento das primeiras bombas atômicas. 
+
+Foi professor na Universidade de Princeton e um dos construtores do ENIAC. Entre os anos de 1946 e 1953, von Neumann integrou o grupo reunido sob o nome de Macy Conferences, contribuindo para a consolidação da teoria cibernética junto com outros cientistas renomados. 
+
+fonte: https://en.wikipedia.org/wiki/John_von_Neumann
+</td>
+</tr></table>
+
+<table style="font-size:70%;"><tr>
+<td style="text-align: left;">
+
+Oskar Morgenstern (Görlitz, Alemanha, 24 de janeiro de 1902 — Princeton, Estados Unidos, 26 de julho de 1977) foi um economista austríaco. É considerado um dos fundadores da teoria dos jogos.
+
+Morgenstern trabalhou na Universidade de Viena até ser demitido pelos nazistas em 1938, tendo então emigrado para os Estados Unidos, onde se tornou professor da Universidade de Princeton. O trabalho que mais contribuiu para a sua fama foi Theory of Games and Economic Behavior (em tradução livre, "Teoria dos Jogos e Comportamento Econômico", de 1944), escrito em parceria com o renomado matemático John von Neumann, que lançou definitivamente as bases da teoria dos jogos e também da teoria da escolha sob incerteza.
+
+fonte: https://pt.wikipedia.org/wiki/Oskar_Morgenstern
+</td>
+<td style="width:30%;">
+
+```{r out.width='100%', fig.align="left", echo=FALSE}
+knitr::include_graphics("image/Oskar Morgenstern.jpg")
+```
+
+<div align=right><small><small>
+https://mises.org/profile/oskar-morgenstern-0
+</small></small></div>
+</td>
+</tr></table>
+
+</td></tr></table>
+
+<br>
+
+# O que a teoria dos jogos estuda?
+
+Situações estratégicas: situações nas quais os resultados que afetam você depende das suas ações assim como das ações dos outros.
+
+A teoria dos jogos pressupõe que os jogadores sejam racionais no sentido de serem sempre maximizadores de ganhos (e.g.: utilidade).
+
+A Teoria dos Jogos evolucionista (TJE) assume que um jogador é pré-programado com uma estratégia herdada, pura ou mista, e que essa estratégia é fixa para a vida toda. Se as estratégias mais bem sucedidas puderem ser traduzidas em sucesso reprodutivo, isso implica que estas produzem mais descendentes; já as mal sucedidas tendem a desaparecer.
+
+O que acontecerá após muitas gerações? 
+
+O processo evolucionista selecionará o comportamento que parecerá aos olhos de um observador como sendo resultado de interações entre jogadores racionais! Geralmente encontramos quase-racionalidade em modelos darwinistas de adaptação (Hammerstein, 2001).
+
+Na teoria dos jogos evolucionista procuramos pela estratégia que é favorecida pela seleção natural. 
+
+Para os jogos que serão apresentados, procuraremos por uma estratégia que seja estável frente às forças da seleção natural; chamaremos essa estratégia de estratégia evolutivamente estável (EEE) (Maynard Smith e Price, 1973).
+
+# A lógica do conflito animal
+
+Recursos são escassos; a escassez gera conflitos (da ameaça à luta), i.e., disputas pelos recursos, eventualmente físicas (abordagem malthusiana).
+
+As díades de coespecíficos adotam o confronto direto para ter acesso ao recurso limitado (agressividade entre coespecíficos inata de Lorenz).
+
+Dois componentes do comportamento:
+
+  * comportamento de exibição (_display_): comportamento comunicativo que permite que o outro organismo module seu comportamento em função do sinal informado;
+  * comportamento agonístico (luta): qualquer comportamento social relacionado à disputa por recurso importante (território, direito de dominância, parceiros, provisão de alimentos etc.) causando perda de aptidão do contendor derrotado.
+
+Em 1973 John Maynard Smith e George Price explicaram o motivo pelo qual algumas vezes a seleção favorece a prudência. Este modelo é chamado de jogo Falcão-Pomba.
+
+Entender isso é importante já que a característica-chave do comportamento social é que tipicamente a aptidão individual depende do comportamento dos outros.
+
+Se a aptidão da estratégia dependente da frequência relativa (média ponderada da aptidão das interações sociais das estratégias pelas respectivas frequências relativas), é necessário usar a Teoria dos Jogos Evolucionista para descobrir a melhor estratégia.
+
+Analisando um conflito animal sob uma perspectiva
+evolucionista poderíamos concluir que aos
+organismos vencedores caberiam todos ou os
+melhores recursos (direito de dominância, parceiros,
+territórios e outras vantagens).
+
+Isso refletir-se-ia na transmissão de genes para as
+futuras gerações, ou seja, esses organismos
+tenderiam a deixar mais descendentes que os outros.
+
+Consequentemente, seria de esperar que pelo
+processo de seleção natural organismos com as
+armas mais letais ou que se utilizam de
+estratégias mais letais fossem selecionados.
+
+Como vimos anteriormente, na natureza, ao invés
+de uma guerra total entre organismos
+coespecíficos, os conflitos observados são por
+meio de uma guerra limitada envolvendo
+armas ineficientes ou táticas ritualizadas que
+raramente causam sérios danos ou ferimentos
+para os envolvidos no conflito.
+
+* Como explicar a ausência de uma guerra total entre organismos da mesma espécie?
+
+* Existe falha no raciocínio evolutivo?
+
+A tentativa de explicação, até a década de 70, envolvia a ideia de seleção de grupo pela qual a seleção atuava sobre
+comportamentos que beneficiam o grupo ao invés
+dos organismos, i.e., uma guerra limitada
+beneficiaria o grupo. 
+
+Em 1973, John Maynard Smith e George Price no seu
+artigo _The logic of animal conflict_ publicado na
+_Nature_, explicou porque uma guerra limitada
+tendia a beneficiar o organismo (seleção sobre o
+organismo) e, consequentemente, a espécie.
+
+```{r out.width='60%', echo=FALSE}
+knitr::include_graphics("image/LAC_paper.jpeg", dpi=100)
+```
+
+```{r fig.align="left", echo=FALSE}
+knitr::include_graphics("image/coruja.png", dpi=150)
+```
+<table style="border:1; background-color:#CAE0AB"><tr><td>
+
+<table style="font-size:70%;"><tr><td style="width:30%;">
+
+```{r out.width='100%', fig.align="left", echo=FALSE}
+knitr::include_graphics("image/GRPrice.png")
+```
+
+<div align=right><small><small><small>London 1974. Copyright<br>
+© Estate of George Price</small><br>
+https://blogs.bl.uk/untoldlives/2018/04/calculating-kindness-george-price.html</small></small></div>
+</td><td style="text-align: left;">George R. Price (06/10/22 -
+06/01/75) foi um geneticista de populações dos Estados Unidos da América. Originalmente um físico-químico e mais tarde
+um jornalista de ciência, mudou-se para Londres em
+1967 onde trabalhou em biologia teórica no Galton
+Laboratory, fazendo três importantes contribuições:
+primeira, rederivando o trabalho de W.D. Hamilton
+sobre a seleção de parentesco com uma nova equação
+de Price; segundo, introduzindo (com John Maynard
+Smith) o conceito de estratégia evolutivamente estável,
+um conceito central em teoria dos jogos; e terceiro,
+formalizando o teorema fundamental da seleção
+natural (Fisher).
+
+Após ter dado todas as suas posses a mendigos que
+deixou viverem em sua casa, cometeu suicídio devido as
+suas descobertas da derivação do altruísmo,
+acreditando que não haveria bondade na humanidade.</td>
+</table>
+
+<table style="font-size:70%;"><tr>
+<td style="text-align: left;">
+John Maynard Smith (06/01/20 — 19/04/04) foi
+um biólogo britânico. Foi professor emérito
+na Universidade de Sussex, especializado
+em genética e teoria evolucionista. Famoso por
+utilizar a teoria dos jogos como ferramenta para
+explicar certos fenômenos evolucionários.
+
+Nascido em Londres, sua família mudou-se
+para Exmoor em 1928, quando seu pai morreu.
+Formou-se em engenharia e trabalhou como
+projetista de aeronaves durante a Segunda Guerra
+Mundial. Quando esta terminou, voltou à
+universidade e formou-se em biologia.
+
+Agraciado em vida, tem o seu nome imortalizado
+no Prêmio John Maynard Smith, da _European
+Society for Evolutionary Biology_.
+</td>
+<td style="width:30%;">
+
+```{r out.width='100%', fig.align="left", echo=FALSE}
+knitr::include_graphics("image/JMSmith.png")
+```
+
+<div align=right><small><small><small>image: John Maynard Smith at work in his office, 1980s.<br>© University of Sussex.</small>
+https://helenpiel.wordpress.com/jms-in-15-images/
+</small></small></div>
+</td>
+</table>
+
+</td></tr></table>
+
+Para encontrarmos a estratégia evolutivamente estável (EEE), num jogo evolucionista, dispomos de dois métodos principais:
+
+  * a modelagem matemática e
+  * simulação computacional.
+
+A modelagem matemática envolve expressar as principais estratégias envolvidas de forma matematicamente simples e com base nelas prover provas, predições e obter resultados que podem ser contra-intuitivos.
+
+# Estratégias Hawk e Dove
+
+```{r out.width = '70%', echo=FALSE}
+knitr::include_graphics("image/HawkDovePicture.png")
+```
+
+<div align=right><small><small>
+Modificado de<br>
+https://blueridgecountry.com/blogging/behind-brc/birds-of-the-blue-ridge-red-tailed-hawk/<br>
+https://www.spirit-animals.com/dove-symbolism/
+</small></small></div>
+
+Este é o modelo mais simples, e que será mais detalhado adiante, sobre evolução social. 
+
+<div align=center>
+<font style="font-size:150%; text-align:center;">
+"PREFACE
+
+<span style="background-color:yellow;">Social evolution occurs when there is a tension between conflict and cooperation.</span>"
+<div align=right><small>
+Steven A. Frank (1998)
+</small></div>
+</font></div>
+
+```{r out.width = '90%', echo=FALSE}
+knitr::include_graphics("image/FrankSteven.png")
+```
+
+<div align=right><small><small>
+https://press.princeton.edu/books/paperback/9780691059341/foundations-of-social-evolution
+</small></small></div>
+
+O nome do jogo é uma [alegoria](https://www.dicio.com.balegoria/). Este modelo **não é** sobre a competição entre duas espécies, mas a descrição de dois comportamentos na disputa por recurso comum.
+
+```{r out.width='50%', echo=FALSE}
+knitr::include_graphics("image/hwpicture.png", dpi=100)
+```
+
+Suposições:
+
+* Organismos coespecíficos haploides com reprodução assexuada (fenótipo = genótipo)
+* Díades de organismos coespecíficos são formadas aleatoriamente a partir de uma população muito grande que disputam recurso importante
+  
+Existem apenas duas estratégias no ambiente que disputam um recurso importante
+
+  * Hawk (H, falcão) utiliza uma estratégia agressiva, lutando pelo recurso quando encontra outro indivíduo.
+  * Dove (D, pomba) utiliza uma estratégia pacífica, dividindo o recurso com outra pomba ou abandonando o recurso, sem lutar, quando encontra um falcão.
+
+Quando os dois organismos da díade têm a mesma estratégia, as probabilidades são iguais, 50%, de vencer a disputa pelo recurso importante (vitórias aleatórias).
+
+Quando os dois organismos da díade têm estratégias diferentes, o recurso fica integralmente com H, pois D não o disputa.
+
+# Modelagem do jogo Hawk-Dove
+
+* $w_0 > 0$ é a aptidão basal da população, i.e., a aptidão média da população excluindo a interação social diádica.
+* $w_0$ é igual para as duas estratégias, pois os organismos diferem apenas na estratégia adotada.
+* Quanto maior $w_0$ em relação ao efeito da interação social diádica, mais fraco é o efeito da seleção natural, i.e., mais lenta é a alteração da frequência da estratégia na população.
+* As interações sociais diádicas promovem mudanças nas aptidões médias das estratégias.
+* O restante da aptidão depende do valor do recurso, $v > 0$, e do custo de perder uma luta, $c > 0$; podem compor aptidão além do $w_0$.
+* $w_0 > c$: cada interação social diádica de luta não é de vida ou morte.
+* $p$: proporção dos organismos que adotam a estratégia Falcão (H) na população ou a probabilidade do organismo adotar a estratégia H na disputa diádica.
+
+```{r out.width='70%', echo=FALSE}
+knitr::include_graphics("image/box22.png")
+```
+
+
+# Qual é a matriz de recompensa do jogo H-D?
+
+Para responder esta pergunta precisamos obter um expressão da recompensa da interação social diádica entre estratégias.
+
+Vamos indicar esta função da recompensa assim:
+
+$$V(X|Y)$$
+
+É a recompensa (_payoff_) da estratégia focal $X$ devido à interação com a estratégia $Y$. Por exemplo, no caso de Falcão (H) e Pomba (D) podemos montar a seguinte matriz de recompensas:
+
+<table
+style="text-align: left; width: 50%; margin-left: auto; margin-right: auto; font-size:150%;"
+border="0" cellpadding="2" cellspacing="2">
+<tbody>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">H</span><br>
+</td>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">D</span><br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">H</span></td>
+<td style="vertical-align: top; text-align: center;">$V(H|H)$<br>
+</td>
+<td style="vertical-align: top; text-align: center;">$V(H|D)$<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">D</span><br>
+</td>
+<td style="vertical-align: top; text-align: center;">$V(D|H)$<br>
+</td>
+<td style="vertical-align: top; text-align: center;">$V(D|D)$<br>
+</td>
+</tr>
+</tbody>
+</table><br>
+
+As interações diádicas possíveis e suas respectivas recompensas são:
+
+$$V(H|H) = \dfrac{v-c}{2} \\
+V(H|D) = v \\
+V(D|H) = 0 \\
+V(D|D) = \dfrac{v}{2}$$
+
+que é transcrito para uma matriz de recompensas como:
+
+<table
+style="text-align: left; width: 50%; margin-left: auto; margin-right: auto; font-size:150%;"
+border="0" cellpadding="2" cellspacing="2">
+<tbody>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">$\small{p}$<br>H</span><br>
+</td>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">$\small{1-p}$<br>D</span><br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">H</span></td>
+<td style="vertical-align: top; text-align: center;">${v-c} \over {2}$<br>
+</td>
+<td style="vertical-align: top; text-align: center;">$v$<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">D</span><br>
+</td>
+<td style="vertical-align: top; text-align: center;">$0$<br>
+</td>
+<td style="vertical-align: top; text-align: center;">${v} \over {2}$<br>
+</td>
+</tr>
+</tbody>
+</table><br>
+
+Adicionamos, no topo da matriz de recompensas, as frequências relativas das estratégias, respectivamente $p$ (tomando-se H como referência) e $1-p$ (para D). 
+
+Este tipo de tabela descreve os ganhos e custos considerando como **focal** a estratégia que aparece nas linhas. Lê-se:
+
+Na primeira linha, H é a focal.
+
+* na primeira coluna encontra outra H. A díade $H|H$ sempre luta e, como ambas são iguais, em metade das vezes H focal vence e recebe $v \over 2$; na outra metade das vezes perde e tem custo, arcando com $-{c \over 2}$. O ganho líquido, portanto, é o que aparece na tabela.
+* na segunda coluna encontra D. A estratégia D não disputa e, portanto, H focal recebe $v$ sem custo algum.
+
+Na segunda linha, D é a focal.
+
+* na primeira coluna encontra H. Como, neste encontro, D focal abandona o recurso, nada recebe. Também não há custo, pois D nunca luta.
+* na segunda coluna encontra outra D. Entre estas estratégias não há luta. Há duas interpretações possíveis, ambas resultando em $v \over 2$: a díade $D|D$ divide o recurso ou, com 50% de probabilidade, uma ou outra abandona o recurso.
+
+```{r fig.align="left", echo=FALSE}
+knitr::include_graphics("image/coruja.png")
+```
+
+<table style="border:1; background-color:#CAE0AB;"><tr><td style="text-align: left;">
+Os valores das caselas são as variações<br>
+da aptidão média da estratégia focal que se encontra na linha<br>
+ao interagir com aquela que se encontra na coluna.
+</td></tr></table>
+
+Por último, podemos calcular a aptidão ($W(H)$ e $W(D)$) das estratégias Falcão (H) e Pomba (D):
+
+$$
+W(H) = w_0 + pV(H|H) + (1-p)V(H|D) \\
+W(H) = w_0 + p\dfrac{v-c}{2} + (1-p)v \\
+~\\
+W(D) = w_0 + pV(D|H) + (1-p)V(D|D) \\
+W(D) = w_0 + (1-p)\dfrac{v}{2} \\
+$$
+
+O objetivo é avaliar como se comporta a variável de estado do modelo, $p$. Perceba que as expressões $W(H)$ e $W(D)$ são semelhantes às do Box 1.2 (p. 17) no modelo de seleção natural por viabilidade do capítulo 1. Então, da mesma forma, obtemos a equação de diferença do replicador:
+
+$$\Delta p=p(1-p)\dfrac{W(H)-W(D)}{\bar{w}}$$
+
+sendo que
+
+$$\bar{w} = {pW(H)+(1-p)W(D)}$$
+
+A equação recursiva correspondente é
+
+$$p'' = p\dfrac{W(H)}{\bar{w}}$$
+
+# Análise de equilíbrio
+
+Inicialmente, utilizando WolframAlpha, podemos encontrar os valores de $p$ candidatos a pontos de equilíbrio a partir do seguinte comando:
+
+[p (1-p) (H - D)/(p H + (1-p) D) /. H = w + p (v-c)/2 + (1-p) v, D=w + (1-p)(v/2)](https://www.wolframalpha.com/input?i=p+%281-p%29+%28H+-+D%29%2F%28p+H+%2B+%281-p%29+D%29+%2F.+H+%3D+w+%2B+p+%28v-c%29%2F2+%2B+%281-p%29+v%2C+D%3Dw+%2B+%281-p%29%28v%2F2%29){target="_blank"}
+
+Para evitar confusões com o processamento do WolframAlpha, notamos $W(H)$ como <code>H</code>, $W(D)$ como <code>D</code> e $w_0$ como <code>w</code>.
+
+O sistema devolve formas de escrever esta expressão, e podemos escolher uma delas, por exemplo a que parece visualmente mais simples: 
+
+<code>((-1 + p) p (c p - v))/(-c p^2 + v + 2 w)</code>
+
+Podemos utilizar esta expressão para igualá-la a zero:
+
+Se $v<c$, então:
+
+[solve for p: ((-1 + p) p (c p - v))/(-c p^2 + v + 2 w)=0, v>0, c>0, w>0, v<c, w>c, 0<=p<=1](https://www.wolframalpha.com/input?i=solve+for+p%3A+%28%28-1+%2B+p%29+p+%28c+p+-+v%29%29%2F%28-c+p%5E2+%2B+v+%2B+2+w%29%3D0%2C+v%3E0%2C+c%3E0%2C+w%3E0%2C+v%3Cc%2C+w%3Ec%2C+0%3C%3Dp%3C%3D1){target="_blank"}
+
+O resultado é:
+
+* $\hat{p}=0$
+* $\hat{p}=1$
+* $\hat{p} = \dfrac{v}{c}$
+
+Se $v>c$, então:
+
+[solve for p: ((-1 + p) p (c p - v))/(-c p^2 + v + 2 w)=0, v>0, c>0, w>0, v>c, w>c, 0<=p<=1](https://www.wolframalpha.com/input?i=solve+for+p%3A+%28%28-1+%2B+p%29+p+%28c+p+-+v%29%29%2F%28-c+p%5E2+%2B+v+%2B+2+w%29%3D0%2C+v%3E0%2C+c%3E0%2C+w%3E0%2C+v%3Ec%2C+w%3Ec%2C+0%3C%3Dp%3C%3D1){target="_blank"}
+
+O resultado é:
+
+* $\hat{p}=0$
+* $\hat{p}=1$
+
+Agora temos dois ou três possíveis valores de equilíbrio dependendo da relação entre $v$ e $c$.
+
+Assumimos que $v<c$ para a análise de equilíbrio realizada a seguir.
+
+Para sabermos se o ponto de equilíbrio é estável, precisamos computar a derivada da função recursiva no ponto de equilíbrio. 
+
+Iniciamos substituindo $W(H)$ e $W(D)$ em termos de $p$, $w_0$, $v$ e $c$:
+
+[p (H / (p H + (1-p) D)) /. H = w + p (v-c)/2 + (1-p) v, D = w + (1-p) (v/2)](https://www.wolframalpha.com/input?i=p+%28H+%2F+%28p+H+%2B+%281-p%29+D%29%29+%2F.+H+%3D+w+%2B+p+%28v-c%29%2F2+%2B+%281-p%29+v%2C+D+%3D+w+%2B+%281-p%29+%28v%2F2%29){target="_blank"}
+
+O resultado é:
+
+<code>(p (p (c + v) - 2 (v + w)))/(c p^2 - v - 2 w)</code>
+
+Encontramos formas alternativas, e novamente escolhemos a que parece visualmente mais simples, solicitando sua devivada parcial em $p$:
+
+[derivative (p (p (c + v) - 2 (v + w)))/(c p^2 - v - 2 w) in p](https://www.wolframalpha.com/input?i=derivative+%28p+%28p+%28c+%2B+v%29+-+2+%28v+%2B+w%29%29%29%2F%28c+p%5E2+-+v+-+2+w%29+in+p){target="_blank"}
+
+O resultado é:
+
+<code>(-2 ((-1 + p) v - w) (v + 2 w) + 2 c p ((-1 + p) v + (-2 + p) w))/(-c p^2 + v + 2 w)^2</code>
+
+Da solução, escolhemos uma delas e solicitamos a substituição dos três pontos de equilíbrio encontrados acima
+
+* $\hat{p}=0$:
+
+[(-2 ((-1 + p) v - w) (v + 2 w) + 2 c p ((-1 + p) v + (-2 + p) w))/(-c p^2 + v + 2 w)^2 /. p=0](https://www.wolframalpha.com/input?i=%28-2+%28%28-1+%2B+p%29+v+-+w%29+%28v+%2B+2+w%29+%2B+2+c+p+%28%28-1+%2B+p%29+v+%2B+%28-2+%2B+p%29+w%29%29%2F%28-c+p%5E2+%2B+v+%2B+2+w%29%5E2+%2F.+p%3D0){target="_blank"}
+
+O resultado é:
+
+<code>1 + v/(v + 2 w)</code>
+
+* $\hat{p}=1$:
+
+[(-2 ((-1 + p) v - w) (v + 2 w) + 2 c p ((-1 + p) v + (-2 + p) w))/(-c p^2 + v + 2 w)^2 /. p=1](https://www.wolframalpha.com/input?i=%28-2+%28%28-1+%2B+p%29+v+-+w%29+%28v+%2B+2+w%29+%2B+2+c+p+%28%28-1+%2B+p%29+v+%2B+%28-2+%2B+p%29+w%29%29%2F%28-c+p%5E2+%2B+v+%2B+2+w%29%5E2+%2F.+p%3D1){target="_blank"}
+
+O resultado é:
+
+<code>-(2 w)/(c - v - 2 w)</code>
+
+* $\hat{p}={v \over c}$:
+
+[(-2 ((-1 + p) v - w) (v + 2 w) + 2 c p ((-1 + p) v + (-2 + p) w))/(-c p^2 + v + 2 w)^2 /. p=v/c](https://www.wolframalpha.com/input?i=%28-2+%28%28-1+%2B+p%29+v+-+w%29+%28v+%2B+2+w%29+%2B+2+c+p+%28%28-1+%2B+p%29+v+%2B+%28-2+%2B+p%29+w%29%29%2F%28-c+p%5E2+%2B+v+%2B+2+w%29%5E2+%2F.+p%3Dv%2Fc){target="_blank"}
+
+O resultado é:
+
+<code>(2 c w)/((c - v) v + 2 c w)</code>
+
+Temos, portanto, analiticamente, os valores das derivadas pontuais e, dependendo dos valores de $w$, $v$ e $c$, poderemos verificar se $\hat{p}$ é de equilíbrio estável.
+
+Os valores de $w_0$ devem sempre ser maiores que $c$ para que as interações diádicas nunca resultem em aptidão negativa ou nula. Por simplificação, estabeleceremos $w=5$. 
+
+# Derivada em $\hat{p}=0$
+
+$${{dp''} \over {dp}} \rvert_{\hat{p}=0} = {{v \over {v + 2 w_0}}+1}$$
+
+Substituindo <code>w</code> por 5 e dando uma faixa para <code>v</code> entre 0 e 3 (não aparece <code>c</code> nesta derivada):
+
+[plot 1 + v/(v + 2 5) from v=0 to v=3 axes label "v" "d"](https://www.wolframalpha.com/input?i=plot+1+%2B+v%2F%28v+%2B+2+5%29+from+v%3D0+to+v%3D3+axes+label+%22v%22+%22d%22){target="_blank"}
+
+exibe:
+
+```{r out.width='70%', echo=FALSE}
+knitr::include_graphics("image/HD_p0.png")
+```
+
+O gráfico da superfície da derivada em $\hat{p}=0$ é:
+
+```{r eval=TRUE, echo=FALSE}
+seq <- seq(1, 10, by = .1)
+w0 <- c()
+v <- c()
+d <- c()
+x <- c()
+y <- c()
+d <- c()
+
+for (i in seq) {
+  w0<-i
+  for (f in seq) {
+    v<-f
+    d <- c((v/(v+2*w0)) + 1, d)
+    x <- c(w0, x)
+    y <- c(f, y)
+  }
+}
+
+w0 <- x
+v <- y
+
+fig <- plotly::plot_ly(x = ~w0, y = ~v, z = ~d, type = 'mesh3d')
+fig
+```
+
+Mostrando que todos os valores das derivadas estão acima de 1 se $w_{0}>0$ e, portanto, $\hat{p}=0$ não é ponto de equilíbrio estável em nenhuma circunstância.
+
+# Derivada em $\hat{p}=1$
+
+$$\dfrac{dp''}{dp} \rvert_{\hat{p}=1} = \dfrac{2w_0}{2w_0+v-c}$$
+
+Neste caso, substituindo <code>w</code> por 5 e dando uma faixa para <code>c</code> e <code>v</code> entre 0 e 3 (com o cuidado de colocar <code>c</code> antes de <code>v</code>, para que fiquem, respectivamente, nos eixos das abscissas e ordenadas):
+
+[contour plot 2 5 / (2 5 + v - c) from c=0 to c=3 from v=0 to v=3 axes label "c" "v" plot legend](https://www.wolframalpha.com/input?i=contour+plot+2+5+%2F+%282+5+%2B+v+-+c%29+from+c%3D0+to+c%3D3+from+v%3D0+to+v%3D3+axes+label+%22c%22+%22v%22+plot+legend){target="_blank"}
+ 
+exibe:
+
+```{r out.width='60%', echo=FALSE}
+knitr::include_graphics("image/HD_p1.gif")
+```
+
+Mostrando que todos os valores das derivadas estão entre -1 e 1 para os valores acima da diagonal, i.e., quando $v>c$ e, portanto, somente nesta condição $\hat{p}=1$ é ponto de equilíbrio estável.
+
+# Derivada em $\hat{p}=\frac{v}{c}$
+
+$$\dfrac{dp''}{dp} \rvert_{\hat{p}=\frac{v}{c}} = \dfrac{2c w_0}{2cw_0-v(v-c)}$$
+
+Com as mesmas condições anteriores:
+
+[contour plot 5 c / (2 5 c + v (c - v)) from c=0 to c=3 from v=0 to v=3 axes label "c" "v" plot legends](https://www.wolframalpha.com/input?i=contour+plot+5+c+%2F+%282+5+c+%2B+v+%28c+-+v%29%29+from+c%3D0+to+c%3D3+from+v%3D0+to+v%3D3+axes+label+%22c%22+%22v%22+plot+legends){target="_blank"}
+ 
+exibe:
+
+```{r out.width='60%', echo=FALSE}
+knitr::include_graphics("image/HD_pvc.gif")
+```
+
+Mostrando que todos os valores das derivadas estão entre -1 e 1 para os valores abaixo da diagonal, i.e., quando $v<c$ e, portanto, somente nesta condição $\hat{p}={v \over c}$ é ponto de equilíbrio estável.
+
+# $v<c$
+
+Podemos verificar os achados analíticos e observar os comportamentos dinâmicos utilizando o método gráfico. Vamos adotar esta condição com $w_0=5$, $v=2$ e $c=3$:
+
+A progressão no tempo está implementada em [eiras.demoptHD.R](eiras.demoptHD.R), mostrando que há um ponto de equilíbrio intermediário entre _Hawk_ e _Dove_: 
+
+```{r echo=TRUE, class.source="bgcodigo", class.output="bgsaida"}
+source("eiras.ptHD.R")
+pH <- 0.01
+pD <- 1-pH
+w0 <- 5
+v <- 2
+c <- 3
+t <- 150
+ptHD(pH,pD,w0,v,c,t)
+```
+
+O comportamento de $\Delta p$ em relação a $p$ (usando a proporção de H como referência) está implementado em [eiras.demodeltapHD.R](eiras.demodeltapHD.R):
+
+```{r echo=TRUE, class.source="bgcodigo", class.output="bgsaida"}
+source("eiras.demodeltapHD.R")
+w0 <- 5
+v <- 2
+c <- 3
+demodeltapHD(w0,v,c)
+```
+
+O comportamento de $p''$ em função de $p$ torna-se:
+
+```{r echo=TRUE, class.source="bgcodigo", class.output="bgsaida"}
+source("eiras.pduaslinhasHD.R")
+w0 <- 5
+v <- 2
+c <- 3
+dt_ptos <- pdualinhasHD(w0,v,c)
+```
+
+Com o método gráfico podemos verificar se algum dos pontos de equilíbrio é estável:
+
+```{r echo=TRUE, class.source="bgcodigo", class.output="bgsaida"}
+source("eiras.pduaslinhasHD_eq.R")
+w0 <- 5
+v <- 2
+c <- 3
+# caminho recursivo iniciando nos seguintes valores de p
+pini <- c(0.1,0.9)
+pdualinhasHD_eq(w0,v,c,pini)
+```
+
+# $v>c$
+
+Neste caso o método analítico prevê que somente $\hat{p}=1$ (i.e., terminar com somente a estratégia H) é o ponto de equilíbrio. Vamos adotar esta condição com $w_0=5$, $v=4$ e $c=3$:
+
+A progressão no tempo é: 
+
+```{r echo=TRUE, class.source="bgcodigo", class.output="bgsaida"}
+source("eiras.ptHD.R")
+pH <- 0.01
+pD <- 1-pH
+w0 <- 5
+v <- 4
+c <- 3
+t <- 150
+ptHD (pH,pD,w0,v,c,t)
+```
+
+O comportamento de $\Delta p$ em relação a $p$ é:
+
+```{r echo=TRUE, class.source="bgcodigo", class.output="bgsaida"}
+source("eiras.demodeltapHD.R")
+w0 <- 5
+v <- 4
+c <- 3
+demodeltapHD(w0,v,c)
+```
+
+O comportamento de $p''$ em função de $p$ torna-se:
+
+```{r echo=TRUE, class.source="bgcodigo", class.output="bgsaida"}
+source("eiras.pduaslinhasHD.R")
+w0 <- 5
+v <- 4
+c <- 3
+dt_ptos <- pdualinhasHD(w0,v,c)
+```
+
+E verificamos se algum dos pontos de equilíbrio é estável com:
+
+```{r echo=TRUE, class.source="bgcodigo", class.output="bgsaida"}
+source("eiras.pduaslinhasHD_eq.R")
+w0 <- 5
+v <- 4
+c <- 3
+# caminho recursivo iniciando nos seguintes valores de p
+pini <- c(0.1,0.9)
+pdualinhasHD_eq(w0,v,c,pini)
+```
+
+# Jogos simétrico e assimétrico
+
+```{r out.width='80%', fig.align="left", echo=FALSE}
+knitr::include_graphics("image/SmithParker1976.png")
+```
+
+Em jogo simétrico, provavelmente existe algum equilíbrio com uma população fenotipicamente polimórfica. 
+
+A matriz de recompensas do jogo Falcão-Pomba que apresentamos é simétrica:
+
+<table
+style="text-align: left; width: 50%; margin-left: auto; margin-right: auto; font-size:150%;"
+border="0" cellpadding="2" cellspacing="2">
+<tbody>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">$\small{p}$<br>H</span><br>
+</td>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">$\small{1-p}$<br>D</span><br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">H</span></td>
+<td style="vertical-align: top; text-align: center;">${v-c} \over {2}$; ${v-c} \over {2}$<br>
+</td>
+<td style="vertical-align: top; text-align: center;">$v$; $0$<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">D</span><br>
+</td>
+<td style="vertical-align: top; text-align: center;">$0$; $v$<br>
+</td>
+<td style="vertical-align: top; text-align: center;">${v} \over {2}$; ${v} \over {2}$<br>
+</td>
+</tr>
+</tbody>
+</table><br>
+
+Uma matriz de recompensas de um jogo assimétrico tem este tipo de constituição:
+<table
+style="text-align: left; width: 80%; margin-left: auto; margin-right: auto; font-size:150%;"
+border="0" cellpadding="2" cellspacing="2">
+<tbody>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">$\small{p}$<br>_escalate_</span><br>
+</td>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">$\small{1-p}$<br>_display_</span><br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">_escalate_</span></td>
+<td style="vertical-align: top; text-align: center;">$vx-c(1-x)$; $v(1-x)-cx$<br>
+</td>
+<td style="vertical-align: top; text-align: center;">$v$; $0$<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: center; background-color:#b6ecb9;"><span
+style="font-weight: bold;">_display_</span><br>
+</td>
+<td style="vertical-align: top; text-align: center;">$0$; $v$<br>
+</td>
+<td style="vertical-align: top; text-align: center;">${v} \over {2}$; ${v} \over {2}$<br>
+</td>
+</tr>
+</tbody>
+</table>
+
+> modificado de Smith & Parker, 1976
+
+# `eiras.animalconflict.R`
+
+O script `eiras.animalconflict.R` permite executar jogos com duas ou três estratégias. Os jogos são configurados em planilhas (.xlsx) preparadas para este script.
+
+Para gerar o gráfico do jogo H-D, os passos são os seguintes:
+
+1. Baixar no seu computador os arquivos em [Distribuicao_Cap2_ConflitoAnimal](https://drive.google.com/drive/folders/1tsz1IW7aebPl2AxTd2zDunl-5d7tX2wf?usp=sharing);
+2. Executar o arquivo `Distribuicao_Cap2_ConflitoAnimal.Rproj`;
+3. No RStudio, executar com `Source` o script `eiras.animalconflict.R`;
+4. Surgirá na Console do RStudio a seguinte mensagem:
+
+`Welcome to Eira's animal conflict game
+Please, provide the name of a configuration file
+or press ESC to abort.
+Filename (xls or xlsx format): `
+
+5. Digitar, por exemplo, o nome do jogo `game\H-D-R` e pressionar `Enter`;
+6. O gráfico ternário é gerado na área de Plots do RStudio e salvo em `game/H-D-R_results.xlsx.png`;
+7. A planilha de resultados é gerada com o nome `game/H-D-R_results.xlsx`.
+
+# Estratégia evolutivamente estável (EEE)
+
+A estratégia evolutivamente estável (EEE) é, talvez, o mais conhecido e o mais não compreendido conceito na teoria evolucionista dos jogos.
+
+## $v<c$ 
+
+O jogo simples está implementado em [H-D.xlsx](game/H-D.xlsx) para $v=2$ e $c=3$. 
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/DoveHawk_results.xlsx.png", dpi=100)
+```
+
+## $v>c$ 
+
+Para $v=3$ e $c=2$, só existem Hawks:
+```{r, echo=FALSE}
+knitr::include_graphics("image/DoveHawk32_results.xlsx.png", dpi=100)
+```
+
+# Como ler um gráfico ternário
+
+Jogos com 3 estratégias pode ser expresso por um gráfico ternário.
+
+<small>A ternary plot, ternary graph, triangle plot, simplex plot, Gibbs triangle or de Finetti diagram is a barycentric plot on three variables which sum to a constant. It graphically depicts the ratios of the three variables as positions in an equilateral triangle. It is used in physical chemistry, petrology, mineralogy, metallurgy, and other physical sciences to show the compositions of systems composed of three species. In population genetics, it is often called a de Finetti diagram. In game theory, it is often called a simplex plot. Ternary plots are tools for analyzing compositional data in the three-dimensional case.</small>
+<div align=right><small>
+https://en.wikipedia.org/wiki/Ternary_plot
+</small></div>
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/ABC.png", dpi=100)
+```
+
+```{r fig.align="left", echo=FALSE}
+knitr::include_graphics("image/coruja.png", dpi=150)
+```
+
+<table style="border:1; background-color:#CAE0AB"><tr><td>
+É fácil entender os eixos (com um modelo):
+
+- Imagine três eixos, para os valores $A$, B e $C$, indo de $0$ a $1$.
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/ternevol01.png")
+```
+
+- Coloque os eixos um sobre os outros, centrados em um triângulo equilátero. O ápice do eixo $C$ coincide com o vértice do topo do triângulo.
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/ternevol02.png")
+```
+
+- Rotacione o eixo $A$ para a esquerda até que seu ápice alcance o vértice esquerdo do triângulo. 
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/ternevol03.png")
+```
+
+- Faça o mesmo com o eixo B, rotacionando-o à direita até alcançar o vértice direito do triângulo.
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/ternevol04.png")
+```
+
+- Os vértices do triângulo correspondem a 1 e as arestas opostas correspondem a 0 de proporção de $A$, B e $C$. 
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/ternevol05.png")
+```
+
+Basta imaginar estes três eixos para ter noção de qual a proporção relativa de cada uma das quantidades, considerando sempre que $A+B+C=1$.
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/ternevol06.png")
+```
+
+</td></tr></table>
+
+# Hawk-Dove-Retaliator
+
+Neste jogo a estratégia Retaliador (R) é comportar-se como seu oponente. 
+
+Quando a proporção inicial de R é maior que $v \over c$ leva à extinção de H; caso contrário, R é extinto e converge para o equilíbrio entre H e D.
+
+A tabela de recompensas é:
+<table id="t01" class="center">
+<tr><td></td><th>Hawk</th><th>Dove</th><th>Retaliator</th></tr>
+<tr><th>Hawk</th><td>$\Large{{v-c} \over {2}}$</td><td>$\Large{v}$</td><td>$\Large{{v-c} \over {2}}$</td></tr>
+<tr><th>Dove</th><td>$\Large{0}$</td><td>$\Large{{v} \over {2}}$</td><td>$\Large{{v} \over {2}}$</td></tr>
+<tr><th>Retaliator</th><td>$\Large{{v-c} \over {2}}$</td><td>$\Large{{v} \over {2}}$</td><td>$\Large{{v} \over {2}}$</td></tr>
+</table>
+
+Configuramos o jogo na planilha [H-D-R.xlsx](game/H-D-R.xlsx) com os seguintes parâmetros:
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/cfg_Retaliator_parameter.png", dpi=70)
+```
+
+e definimos a estratégia com:
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/cfg_Retaliator_behavior.png", dpi=70)
+```
+
+# $v<c$
+
+Vamos reproduzir a figura 2.3 do livro utilizando o RScript [eiras.animalconflict.R](eiras.animalconflict.R):
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/Fig.2.3.png", dpi=70)
+```
+
+Seguiremos os pontos de origem nesta ordem:
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/Fig.2.3.numeros.png", dpi=120)
+```
+
+## Ponto 1
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/Fig.2.3.plan1.png", dpi=120)
+```
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/Retaliator_pt1_results.xlsx.png", dpi=110)
+```
+
+## Ponto 2
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/Retaliator_pt2_results.xlsx.png", dpi=110)
+```
+
+## Ponto 3
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/Retaliator_pt3_results.xlsx.png", dpi=110)
+```
+
+## Ponto 4
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/Retaliator_pt4_results.xlsx.png", dpi=110)
+```
+
+## Ponto 5
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/Retaliator_pt5_results.xlsx.png", dpi=110)
+```
+
+Cada um dos jogos gera uma figura no formato **.png** e uma planilha contendo as proporções de _Dove_, _Hawk_ e _Retaliator_ com a terminação **\_results.xls**. Colocando todas juntas em [Retaliator_pt1a5_results.xlsx](Retaliator_pt1a5_results.xlsx), podemos usar o RScript [eiras.ternary.replot.R](eiras.ternary.replot.R) para replotar todas as trajetórias juntas:
+
+```{r, echo=TRUE, eval=FALSE}
+source("eiras.ternary.replot.R")
+filename <- "Retaliator_pt1a5_results.xlsx"
+eiras.ternary.replot(filename)
+```
+
+Obtendo
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/Retaliator_pt1a5_results.xlsx.png", dpi=110)
+```
+
+Explorando o ambiente com [eiras.animalconflict.R](eiras.animalconflict.R) usando a planilha [H-D-R.xlsx](game/H-D-R.xlsx)
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/Retaliator_cfg.png", dpi=110)
+```
+
+Obtemos:
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/Retaliator_results.xlsx.png", dpi=110)
+```
+
+# $v>c$
+
+Por exemplo, para $v=3$ e $c=2$:
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/Retaliator32_results.xlsx.png", dpi=110)
+```
+
+# $v=c$
+
+Por exemplo, para $v=2$ e $c=2$:
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/Retaliator22_results.xlsx.png", dpi=110)
+```
+
+# H-D-HD: estratégia contínua
+
+A estratégia HD é Hawk ou Dove com probabilidades H e $1-h$.
+
+A matriz de recompensas é:
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/H-D-HD.png", dpi=70)
+```
+
+```{r eval=TRUE, echo=TRUE, results="hide"}
+source("mygame.R")
+mygame("game/H-D-HD.txt", lines=50, v=2, c=3, w0=5, h=0.5, options="end_dots")
+mygame("game/H-D-HD.txt", lines=50, v=2, c=3, w0=5, h=0.25, options="end_dots")
+mygame("game/H-D-HD.txt", lines=50, v=2, c=3, w0=5, h=0.75, options="end_dots")
+```
+
+```{r eval=TRUE, echo=TRUE, class.output="bgcodigo"}
+cat(readLines("game/H-D-HD.txt"), sep="\n")
+```
+
+# Hawk-Dove-Bourgeois
+
+A estratégia burguês, B, é a do proprietário. Quando chega primeiro ao recurso, o defende como H; quando chega depois, reage como D. 
+
+A tabela de recompensas é:
+
+<table id="t01" class="center">
+<tr><td></td>
+<th>Hawk</th>
+<th>Dove</th>
+<th>Bourgeois</th>
+</tr>
+<tr><th>Hawk</th>
+<td>$\Large{{v-c}\over{2}}$</td>
+<td>$\Large{v}$</td>
+<td>$\Large{{3v - c} \over 4}$</td>
+</tr>
+<tr><th>Dove</th>
+<td>$\Large{0}$</td>
+<td>$\Large{v \over 2}$</td>
+<td>$\Large{{v \over 4}}$</td>
+</tr>
+<tr><th>Bourgeois</th>
+<td>$\Large{{v - c} \over 4}$</td>
+<td>$\Large{{3v} \over 4}$</td>
+<td>$\Large{v \over 2}$</td>
+</tr>
+</table>
+
+# $v<c$
+
+Por exemplo, para $v=2$ e $c=3$ ([H-D-B.xlsx](game/H-D-B.xlsx)):
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/cfg_Bourgeois_parameter.png", dpi=70)
+```
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/cfg_Bourgeois_behavior.png", dpi=70)
+```
+
+Compare com o jogo H-D-R. 
+
+A exploração mostra:
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/Bourgeois_results.xlsx.png", dpi=110)
+```
+
+Note que, próximo ao eixo DH, apareceram alguns pontos de equilíbrio. 
+
+O livro previu isto, mas suspeitamos que não detectou a dinâmica:
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/livro_Bourgeois_quasiHD.png", dpi=110)
+```
+
+# $v>c$
+
+Por exemplo, para $v=3$ e $c=2$:
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/Bourgeois32_results.xlsx.png", dpi=110)
+```
+
+<!--
+# Hawk-Dove-Anarchist
+
+A estratégia do anarquista é oposta à do Burguês: é o invasor da propriedade. Quando chega depois ao recurso, ataca como H; quando chega primeiro, reage como D. A tabela de recompensas é:
+
+<table id="t01" class="center">
+<tr><td></td><th>Hawk</th><th>Dove</th><th>Anarchist</th></tr>
+<tr><th>Hawk</th><td>$\Large{{{v-c}\over{2}}}$</td><td>$\Large{{v}}$</td><td>$\Large{{{v}\over{2}}+{{v-c}\over{2}}\cdot{{1}\over{2}}}$</td></tr>
+<tr><th>Dove</th><td>$\Large{0}$</td><td>$\Large{{{v}\over{2}}}$</td><td>$\Large{{{v}\over{2}}\cdot{{1}\over{2}}}$</td></tr>
+<tr><th>Anarchist</th><td>$\Large{{{v-c}\over{2}}\cdot{{1}\over{2}}}$</td><td>$\Large{{{v}\over{2}}\cdot{{1}\over{2}}+{{v}\over{2}}}$</td><td>$\Large{{{v}\over{2}}\cdot{{1}\over{2}}+{{v}\over{2}}\cdot{{1}\over{2}}}$</td></tr>
+</table>
+
+
+
+Modelamos com a planilha [Anarchist](Anarchist):
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/cfg_Anarchist_parameter.png", dpi=110)
+```
+Compare com a implementação do jogo do Burguês: trocamos, nas estratégias, de **H|** para **D|** nas linhas 3 e 4, colunas 1 e 2, e de **|D** para **|H** nas linhas 1 e 2, colunas 3 e 4, e vice-versa, acompanhadas das probabilidades de vencer cada disputa diádica. 
+
+O resultado é:
+```{r, echo=FALSE}
+knitr::include_graphics("image/Anarchist_results.xlsx.png", dpi=110)
+```
+
+Não houve engano. O anarquista e o burguês obtém exatamente o mesmo resultado. Compare as tabelas de recompensa respectivas.
+
+-->
+
+# Hawk-Dove-Assessor
+
+Na estratégia Avaliador (_Assessor_), o indivíduo atua como Falcão se é maior do que seu oponente; ele atua como Pomba se é menor; se dois Avaliadores se encontram, um deles se comporta como Pomba e outro como Falcão.
+
+Os pareamentos são aleatórios. 
+
+As vitórias não são equiprováveis (assimetria).
+
+Cada contendor da díade tem 50% de probabilidade de ser o maior (organismos são equiprovavelmente maiores e menores).
+
+_x_ é a probabilidade do maior contendor vencer a disputa entre Avaliador e Falcão; assumir que _x_ > 0.5.
+ 
+
+A tabela de recompensas é:
+
+<table id="t01" class="center">
+<tr><td></td>
+<th>Hawk</th>
+<th>Dove</th>
+<th>Assessor</th>
+</tr>
+<tr><th>Hawk</th>
+<td>$\Large{{v-c}\over{2}}$</td>
+<td>$\Large{v}$</td>
+<td>$\Large{v (1 - {x \over 2}) - c {x \over 2}}$</td>
+</tr>
+<tr><th>Dove</th>
+<td>$\Large{0}$</td>
+<td>$\Large{v \over 2}$</td>
+<td>$\Large{{v \over 4}}$</td>
+</tr>
+<tr><th>Assessor</th>
+<td>$\Large{v {x \over 2} + c ({x \over 2} - {1 \over 2})}$</td>
+<td>$\Large{{3v \over 4} }$</td>
+<td>$\Large{v \over 2}$</td>
+</tr>
+</table>
+
+# $v < c$
+
+Por exemplo, para $v=2$ e $c=3$ ([H-D-A.xlsx](game/H-D-A.xlsx)):
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/cfg_Assessor_parameter.png", dpi=110)
+```
+
+Observe que a única mudança em relação aos burgueses é o comportamento dos avaliadores entre si. Os burgueses (e os anarquistas), não importando quem chegava primeiro, comportavam-se como D (D|D). Os avaliadores podem ser agressivos entre si, o maior deles agindo como H e o outro como D (H|D ou D|H).
+
+O resultado para $v=2$, $c=3$ e $x=0.6$ é:
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/Assessor_results.xlsx.png", dpi=110)
+```
+
+A teoria, para $v<c$, pede $x>0.5$. 
+
+<!--
+
+**O que acontece se o indivíduo é maior mas tem probabilidade de vencer $x<0.5$?**
+
+Vamos configurá-los em [Banana.xlsx](Banana.xlsx); maior, mas não sabe lutar; com $x=0.45$, o resultado é:
+```{r, echo=FALSE}
+knitr::include_graphics("image/Banana_results.xlsx.png", dpi=110)
+```
+Aparece um curioso atrator no meio das trajetórias ascendentes. Há algum limiar neste jogo, dividindo o gráfico ternário em duas áreas distintas.
+
+-->
+
+Voltando ao avaliador com $x>0.5$, mas alterando para $v=1$ e $c=2$, a posição das curvas se modifica mas o jogo é qualitativamente o mesmo que observamos com $v=1$, $c=2$ e $x=0.6$.
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/Assessor12_results.xlsx.png", dpi=110)
+```
+
+Note que o ponto de equilíbrio entre D e H agora é ${v \over c} = {1 \over 2}$.
+
+<!--
+
+## v > c
+
+Quando $v>c$, $A$ é uma estratégia evolucionariamente estável quando $x>{v \over {v+c}}$. Para $v=3$ e $c=2$, com $x=0.75 > {3 \over 5}$ obtemos ([Assessor32(0.75).xlsx](Assessor32(0.75).xlsx)):
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/Assessor32(0.75)_results.xlsx.png", dpi=110)
+```
+
+com $0.5 < x=0.55 < {3 \over 5}$ obtemos ([Assessor32(0.55).xlsx](Assessor32(0.55).xlsx)):
+```{r, echo=FALSE}
+knitr::include_graphics("image/Assessor32(0.55)_results.xlsx.png", dpi=110)
+```
+
+-->
+
+# Podemos criar um jogo?
+
+## Hawk-Dove-ShortTemper
+
+Nesta estratégia, os indivíduos S agem com falcão quando são menores. 
+Por serem menores, sua probabilidade de vencer a luta é $x<0.5$. 
+
+Como reagem contra a provocação, indivíduos S entre si e S com D regaem sem agressão, comportando-se como D. 
+
+Configurando [H-D-S.xlsx](game/H-D-S.xlsx) obtivemos a tabela de recompensas:
+
+<table id="t01" class="center">
+<tr><td></td>
+<th>Hawk</th>
+<th>Dove</th>
+<th>Short Temper</th>
+</tr>
+<tr><th>Hawk</th>
+<td>$\Large{{v-c}\over{2}}$</td>
+<td>$\Large{v}$</td>
+<td>$\Large{v (1 - {x \over 2}) - c {x \over 2}}$</td>
+</tr>
+<tr><th>Dove</th>
+<td>$\Large{0}$</td>
+<td>$\Large{v \over 2}$</td>
+<td>$\Large{{v \over 2} }$</td>
+</tr>
+<tr><th>Short Temper</th>
+<td>$\Large{v {x \over 2} + c ({x \over 2} - {1 \over 2})}$</td>
+<td>$\Large{{v \over 2} }$</td>
+<td>$\Large{v \over 2}$</td>
+</tr>
+</table>
+
+Portanto, a planilha é:
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/cfg_ShortTemper_parameter.png", dpi=110)
+knitr::include_graphics("image/cfg_ShortTemper_behavior.png", dpi=110)
+```
+
+Resultando em:
+
+```{r, echo=FALSE}
+knitr::include_graphics("image/ShortTemper_results.xlsx.png", dpi=110)
+```
+
+
+<!--
+## Retaliator-Hawk-Assessor, um jogo sem Dove
+
+Indivíduos com a estratégia D nos vários jogos acima, não podem dominar o ambiente. Vamos colocar as três estratégias mais agressivas, R, H e $A$ juntas em [RetaliatorHawkAssessor.xlsx](RetaliatorHawkAssessor.xlsx):
+```{r, echo=FALSE}
+knitr::include_graphics("image/cfg_AssessorRetaliator_parameter.png", dpi=110)
+knitr::include_graphics("image/cfg_AssessorRetaliator_behavior.png", dpi=110)
+```
+ obtendo a seguinte matriz de recompensas.
+
+<table id="t01" class="center">
+<tr><td></td>
+<th>Hawk</th>
+<th>Retaliator</th>
+<th>Assessor</th>
+</tr>
+<tr><th>Hawk</th>
+<td>$\Large{{v-c}\over{2}}$</td>
+<td>$\Large{{v-c}\over{2}}$</td>
+<td>$\Large{v - {{x(v+c)}\over{2}}}$</td>
+</tr>
+<tr><th>Retaliator</th>
+<td>$\Large{{v-c}\over{2}}$</td>
+<td>$\Large{v \over 2}$</td>
+<td>$\Large{{{(1-x)v - xc} \over 2} + {v \over 4}}$</td>
+</tr>
+<tr><th>Assessor</th>
+<td>$\Large{{xv - (1-x)c} \over 2}$</td>
+<td>$\Large{{{xv - (1-x)c} \over 2}+{v \over 4}}$</td>
+<td>$\Large{v \over 2}$</td>
+</tr>
+</table>
+
+Obtivemos o gráfico:
+```{r, echo=FALSE}
+knitr::include_graphics("image/RetaliatorHawkAssessor_results.xlsx.png", dpi=110)
+```
+
+-->
+
+# Referências
+
+* McElreath, R & Boyd, R (2007) _Mathematical models of social evolution_. USA: University of Chicago Press. https://doi.org/10.7208/chicago/9780226558288.001.0001
+* HAMMERSTEIN, P (2001) [Games and markets: economic behaviour in humans and other animals.](https://www.researchgate.net/publication/246286341_Games_and_markets_Economic_behaviour_in_humans_and_other_animals) In Noë, R., Van Hoof, J. e Hammerstein, P. (Eds.), Economics in Nature: Social Dilemmas, Mates Choice e Biological Markets. NY: Cambridge University Press, p. 1-19.
+* SMITH, JM & PRICE, G (1973) The logic of animal conflict. _Nature_ 246: 15–8. https://doi.org/10.1038/246015a0.
+* SMITH, JM & PARKER, GA (1976) The logic of asymmetric contests. _Anim Behav_ 24: 159-75.

@@ -1,0 +1,40 @@
+/* Whole document: */
+  body {
+    font-family: Times New Roman;
+    font-size: 18pt;
+    background-color: Alice Blue;
+  }
+/* Headers */
+  h1 {
+    font-family: Times New Roman;
+    font-size: 26pt;
+  }
+  h2 {
+    font-family: Times New Roman;
+    font-size: 24pt;
+  }
+  h3,h4,h5,h6 {
+    font-family: Times New Roman;
+    font-size: 22pt;
+  }
+  
+.bgcodigo {
+background-color: #f0f7a9;
+}
+.bgsaida {
+background-color: #e4ee7e;
+}
+/* Bulleted paragraph style */
+.customlist {
+  font-family: Serif
+  font-size: 12pt;
+  color: black;
+  background-color: #d4dfeb;
+  border: 0px solid black;
+  padding: 10px;
+  padding-left: 50px;
+  margin: 20px;
+}
+pre code {
+  white-space: pre-wrap;
+}

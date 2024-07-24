@@ -1,0 +1,37 @@
+# Doing the dishes
+#
+#   Implemented by Paulo Silveira, 2018
+#
+
+# INSTRUCTIONS
+#   Write equations w1 (right corner = hawk), w2 (top corner) and w3 (left corner = dove)
+#   Remove unnecessary parameters 
+#   Add parameters at the end of the list with default value (using =)
+#   End with ", ...)"
+#   Do not remove w0 from equations 
+#
+#   Edit ps.config to inform the number of corners (2 or 3 kinds of players)
+#   Give the names for the corners in order: left, right and top corner names
+#
+#   Save this definition with no extension or extension ".txt"
+#
+#   Call with:
+#   > mygame("Gamename", parameters, options)
+
+ps.game <- function (p, q, r, v = 3, c = 2, w0 = 5, ...) 
+{
+  # rest
+  w1 = w0 + r*v
+  # empty
+  w2 = w0
+  # wash
+  w3 = w0 + p*(v - c) + r*(v - c/2)
+  
+  c(w1, w2, w3)
+}
+
+ps.config <- function ()
+{
+  # numcorners, labels: left right top
+  c(2,"Wash","Rest","")
+}

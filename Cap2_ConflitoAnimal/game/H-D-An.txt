@@ -1,0 +1,50 @@
+# Anarquista
+#   Anarquista plays Hawk when it has arrived first 
+#   (is the “owner” of the resource) but plays Dove
+#   when it is the intruder.
+#   When two Bourgeois individuals meet, one agrees to leave,
+#   and the other claims the entire resource.
+#
+#   Implemented by Paulo Silveira & Jose Siqueira, 2018
+#
+
+# INSTRUCTIONS
+#   Write equations w1 (right corner = hawk), w2 (top corner) and w3 (left corner = dove)
+#   Remove unnecessary parameters 
+#   Add parameters at the end of the list with default value (using =)
+#   End with ", ...)"
+#   Do not remove w0 from equations 
+#
+#   Edit ps.config to inform the number of corners (2 or 3 kinds of players)
+#   Give the names for the corners in order: left, right and top corner names
+#
+#   Save this definition with no extension or extension (e.g., "Gamename.txt")
+#
+#   Call with:
+#   > mygame("Gamename", parameters, options)
+
+ps.game <- function (p, q, r, v = 2, c = 3, w0 = 5, xp = -1, h = -1.0) 
+{
+#     cat ("\tb",v,c,w0,"\n")
+    w1 <- p*(v - c)/2 + q*(3*v-c)/4 + r*v + w0
+    w2 <- p*(v-c)/4 + q*v/2 + r*3*v/4 + w0
+    w3 <- p*(0) + q*v/4 + r*v/2 + w0
+    c(w1, w2, w3)
+}
+
+ps.config <- function ()
+{
+  # numcorners, labels: left, right, top, others
+  c(3,"Dove","Hawk","Anarquista")
+}
+
+# add your comments (optional)
+ps.comment <- function ()
+{
+  cat
+  ("
+      Hawk, Dove, Anarquista
+
+      default: v=2, c=3, w0 = 5
+  ");
+}

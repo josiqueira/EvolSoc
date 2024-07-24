@@ -1,0 +1,66 @@
+# XRetaliator
+#   Retaliator plays Dove unless its opponent plays Hawk, 
+#   in which case it switches to Hawk
+#   When the Retaliator sees a “fight” signal, it fights back, 
+#   otherwise it displays just as a Dove. When a retaliator
+#   finds another retaliator, both behave as Hawk
+#
+#   Implemented by Paulo Silveira & Jose Siqueira, 2018
+#
+
+# INSTRUCTIONS
+#   Write equations w1 (right corner = hawk), w2 (top corner) and w3 (left corner = dove)
+#   Remove unnecessary parameters 
+#   Add parameters at the end of the list with default value (using =)
+#   End with ", ...)"
+#   Do not remove w0 from equations 
+#
+#   Edit ps.config to inform the number of corners (2 or 3 kinds of players)
+#   Give the names for the corners in order: left, right and top corner names
+#
+#   Save this definition with no extension or extension (e.g., "Gamename.txt"
+#
+#   Call with:
+#   > mygame("Gamename", parameters, options)
+
+#               (p)                   (q)            (r)
+#               H                     XR              D
+#   H         V(H|H) = (v-c)/2    V(H|R) = V(H|H)    V(H|D) = v
+#   R         V(R|H) = V(H|H)     V(R|R) = V(H|H)    V(R|D) = V(D|D)
+#   D         V(D|H) = 0          V(D|R) = V(D|D)    V(D|D) = v/2
+ps.game <- function (p, q, r, w0 = 5, v = 2, c = 3, ...) 
+{
+  # Hawk
+  w1 <- w0 + p*(v-c)/2  + q*(v-c)/2 + r*v
+  # XRetaliator
+  w2 <- w0 + p*(v-c)/2 + q*(v-c)/2 + r*v/2
+  # Dove
+  w3 <- w0 + p*0 + q*v/2 + r*v/2
+  
+  c(w1, w2, w3)
+}
+
+ps.config <- function ()
+{
+  # numcorners, labels: left right top
+  c(3,"Dove","Hawk","XRetaliator")
+}
+
+# add your comments (optional)
+ps.comment <- function ()
+{
+  cat
+  ("
+      XRetaliator
+
+               (p)                   (q)            (r)
+                H                    XR              D
+   H         V(H|H) = (v-c)/2    V(H|XR) = V(H|H)    V(H|D) = v
+   R         V(XR|H) = V(H|H)    V(XR|XR) = V(H|H)   V(XR|D) = V(D|D)
+   D         V(D|H) = 0          V(D|XR) = V(D|D)    V(D|D) = v/2
+      
+      Default condition:
+        v = 2 (resource value)
+        c = 3 (cost for fight)        
+  ");  
+}

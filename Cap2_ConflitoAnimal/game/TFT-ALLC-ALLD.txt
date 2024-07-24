@@ -1,0 +1,67 @@
+# TFT
+#   #
+#   Implemented by Jani Pereira & Paulo Silveira, 2018
+#               (p)                   (q)             (r)
+#               TFT                   AllC            AllD
+#   TFT      (b-c)/(1-w)             (b-c)/(1-w)      -c 
+#   AllC     (b-c)/(1-w)             (b-c)/(1-w)      (-c)/(1-w)       
+#   AllD       b                      b/(1-w)          0
+
+# INSTRUCTIONS
+#   Write equations w1 (right corner = TFT), w2 (top corner = ALL C) and w3 (left corner = ALL D)
+#   Remove unnecessary parameters 
+#
+#   Check function ps.game(): add parameters at the end of the list with default values (using =)
+#   End with ", ...)"
+#   Do not remove w0 from equations 
+#
+#   Edit ps.config() to inform the number of corners (2 or 3 kinds of players)
+#   Give the names for the corners in order: left, right and top corner names
+#
+#   Edit ps.comment() if you intend to give additional information to users
+#
+#   Save this definition with no extension or extension ".txt"
+#
+#   Call with:
+#   > mygame("Gamename", parameters, options)
+
+# add your comments (optional)
+ps.comment <- function ()
+{
+  cat
+  ("
+      TFT
+  ");  
+}
+
+#               (p)                   (q)             (r)
+#               TFT                   AllC            AllD
+#   TFT      (b-c)/(1-w)             (b-c)/(1-w)      -c 
+#   AllC     (b-c)/(1-w)             (b-c)/(1-w)      (-c)/(1-w)       
+#   AllD       b                      b/(1-w)          0
+ps.game <- function (p, q, r, w0 = 5, wt=0.5, b = 4, c = 1, ...) 
+{
+  # agora tem uma letra a mais. Antes v e c; agora w, b e c
+  
+  # TFT
+  w1 <- p*(b-c)/(1-wt) + q*(b-c)/(1-wt) + r*(-c) + w0
+  # AllC
+  w2 <- p*(b-c)/(1-wt) + q*(b-c)/(1-wt) + r*(-c)/(1-wt) + w0
+  # AllD
+  w3 <- p*b + q*b/(1-wt) + r*0 + w0
+  
+  
+#  # TFT
+#  w1 <- (p+q)*(b-c)*(1-w) -r*c + w0
+#  # AllC
+#  w2 <- (p+q)*(b-c)*(1-w) -r*c*(1-w) + w0
+#  # AllD
+#  w3 <- p*b+q*b*(1-w) + w0
+  c(w1, w2, w3)
+}
+
+ps.config <- function ()
+{
+  # numcorners, labels: left, right, top, others
+  c(3,"AllD","TFT","AllC")
+}
